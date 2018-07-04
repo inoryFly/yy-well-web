@@ -1,0 +1,61 @@
+@charset "UTF-8";
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+form,
+input,
+textarea,
+p,
+th,
+td,
+button {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-overflow-style: scrollbar;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+body{
+  font-size: 14px;
+  font-family:"PingFangSC-Medium", "Microsoft YaHei", "Helvetica Neue", ​Helvetica, ​Arial;
+  background: #f2f6f9;
+}
+
+ul,
+ol {
+    list-style-type: none;
+}
+
+a{
+  color: #000;
+  text-decoration: none;
+}
+a:hover,
+a:active{
+  outline: none;
+  text-decoration: none;
+}
