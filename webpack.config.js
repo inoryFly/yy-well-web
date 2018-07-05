@@ -106,7 +106,7 @@ module.exports = function (options = {}) {
       )
     ],
     devServer: {
-      host: '0.0.0.0',
+      host: '192.168.0.106',
       port: 3006,
       clientLogLevel: 'warning',
       hot: true,
