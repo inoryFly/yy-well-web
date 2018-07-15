@@ -7,6 +7,10 @@ import History from '@pages/history/index'
 import Users from '@pages/users/index'
 import Privacypolicy from '@pages/static/privacypolicy'
 import Termofuse from '@pages/static/termofuse'
+import Mobilelogin from '@pages/mobile/login/login'
+import Register from '@pages/mobile/register/register'
+import Center from '@pages/mobile/center/index'
+import Binding from '@pages/mobile/binding/binding'
 
 Vue.use(Router)
 
@@ -55,30 +59,64 @@ const router = new Router({
       path: '/termofuse',
       name: 'termofuse',
       component: Termofuse
+    },
+    {
+      path: '/login',
+      name: 'mobilelogin',
+      component: Mobilelogin,
+      meta: {
+        client: 'mobile'
+      }
+    },
+    {
+      path: '/register',
+      name: 'mobileregister',
+      component: Register,
+      meta: {
+        client: 'mobile'
+      }
+    },
+    {
+      path: '/center',
+      name: 'mobilecenter',
+      component: Center,
+      meta: {
+        client: 'mobile'
+      }
+    },
+    {
+      path: '/binding',
+      name: 'mobilebinding',
+      component: Binding,
+      meta: {
+        client: 'mobile'
+      }
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
-  let sUserAgent = navigator.userAgent.toLowerCase()
-  let bIsIpad = sUserAgent.match(/ipad/i) === 'ipad'
-  let bIsIphone = sUserAgent.match(/iphone os/i) === 'iphone os'
-  let bIsMidp = sUserAgent.match(/midp/i) === 'midp'
-  let bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) === 'rv:1.2.3.4'
-  let bIsUc = sUserAgent.match(/ucweb/i) === 'web'
-  let bIsCE = sUserAgent.match(/windows ce/i) === 'windows ce'
-  let bIsWM = sUserAgent.match(/windows mobile/i) === 'windows mobile'
-  let bIsAndroid = sUserAgent.match(/android/i) === 'android'
-
-  if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM || bIsAndroid) {
-    if (to.matched.some(ele => ele.meta.client !== 'moblie')) {
-      router.push({ name: 'index' })
-    }
-  } else {
-    if (to.matched.some(ele => ele.meta.client === 'moblie')) {
-      router.push({ name: 'index' })
-    }
-  }
+  // let sUserAgent = navigator.userAgent.toLowerCase()
+  // let bIsIpad = sUserAgent.match(/ipad/) === 'ipad'
+  // let bIsIphone = sUserAgent.match(/iphone/) === 'iphone'
+  // let bIsMidp = sUserAgent.match(/midp/) === 'midp'
+  // let bIsUc7 = sUserAgent.match(/rv:1.2.3.4/) === 'rv:1.2.3.4'
+  // let bIsUc = sUserAgent.match(/ucweb/) === 'web'
+  // let bIsCE = sUserAgent.match(/windows ce/) === 'windows ce'
+  // let bIsWM = sUserAgent.match(/windows mobile/) === 'windows mobile'
+  // let bIsAndroid = sUserAgent.match(/android/) === 'android'
+  // console.log(sUserAgent)
+  // console.log(bIsIphone)
+  // if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM || bIsAndroid) {
+  //   if (to.matched.some(ele => ele.meta.client !== 'moblie')) {
+  //     console.log('test')
+  //     router.push({ name: 'mobilelogin' })
+  //   }
+  // } else {
+  //   if (to.matched.some(ele => ele.meta.client === 'moblie')) {
+  //     router.push({ name: 'index' })
+  //   }
+  // }
   next()
 })
 

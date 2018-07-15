@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <qkl-header v-if="pc"></qkl-header>
-    <div class="content">
+    <div class="content" v-if="pc">
+      <router-view />
+    </div>
+    <div class="mobile" v-else>
       <router-view />
     </div>
     <qkl-footer v-if="pc"></qkl-footer>
@@ -21,7 +24,7 @@ export default {
   },
   data () {
     return {
-      pc: true
+      pc: false
     }
   },
   beforeMount () {
@@ -36,9 +39,9 @@ export default {
     let bIsAndroid = sUserAgent.match(/android/i) === 'android'
 
     if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM || bIsAndroid) {
-      this.ok = false
+      this.pc = false
     } else {
-      this.ok = true
+      this.pc = false
     }
   }
 }
@@ -59,5 +62,8 @@ export default {
   width: 100%;
   margin: 0 auto;
   margin-top: 70px;
+}
+.mobile {
+  margin-top: 40px;
 }
 </style>
