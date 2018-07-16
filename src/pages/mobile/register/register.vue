@@ -19,7 +19,7 @@
                     立即登录
                 </router-link>
             </div>
-            <mt-button size="large" type="primary">注册并登陆</mt-button>
+            <mt-button size="large" type="primary" @click="submitForm1">注册并登陆</mt-button>
         </div>
         <div v-else>
             <mt-field label="+86 >" placeholder="请输入手机号" type="number"></mt-field>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { mailReg, mailResult } from '../../../api/'
 export default {
   data () {
     return {
@@ -57,7 +58,7 @@ export default {
     }
   },
   methods: {
-    submit (style) {
+    submitForm1 () {
 
     }
   }

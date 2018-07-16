@@ -21,15 +21,15 @@ module.exports = function (options = {}) {
     },
     module: {
       rules: [
-        {
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          enforce: "pre",
-          include: [path.resolve('src'), path.resolve('test')],
-          options: {
-            formatter: require('eslint-friendly-formatter')
-          }
-        },
+        // {
+        //   test: /\.(js|vue)$/,
+        //   loader: 'eslint-loader',
+        //   enforce: "pre",
+        //   include: [path.resolve('src'), path.resolve('test')],
+        //   options: {
+        //     formatter: require('eslint-friendly-formatter')
+        //   }
+        // },
         {
           test: /\.vue$/,
           loader: 'vue-loader',
@@ -49,7 +49,7 @@ module.exports = function (options = {}) {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: ['babel-loader', 'eslint-loader'],
+          use: ['babel-loader'],
         },
         {
           test: /\.css$/,
@@ -106,7 +106,7 @@ module.exports = function (options = {}) {
       )
     ],
     devServer: {
-      host: '192.168.2.111',
+      host: '192.168.0.103',
       port: 3006,
       clientLogLevel: 'warning',
       hot: true,
