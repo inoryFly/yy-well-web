@@ -1,10 +1,10 @@
 <template>
    <div class="page-tabbar">
 <div class="title">
-    <mt-header fixed>
+        <mt-header fixed>
             <mt-button icon="search" slot="right"></mt-button>
         </mt-header>
-        <div>项目列表</div>
+        <div class="titlecontent">项目列表</div>
 </div>
     <mt-tabbar v-model="selected" fixed>
       <mt-tab-item id="项目列表">
@@ -34,15 +34,20 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .page-tabbar {
   overflow: hidden;
   height: 100vh;
 }
 .title{
     height: 97px;
-}
-.mint-header {
-  background-color: transparent;
+    background: url('../../../images/indexheader.png') no-repeat 0;
+    .mint-header {
+      background-color: transparent;
+    }
+    .titlecontent{
+      color: white;
+      font-size: 29px;
+    }
 }
 </style>
