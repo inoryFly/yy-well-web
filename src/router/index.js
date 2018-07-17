@@ -12,6 +12,7 @@ import Register from '@pages/mobile/register/register'
 import Center from '@pages/mobile/center/index'
 import Binding from '@pages/mobile/binding/binding'
 import MobileIndex from '@pages/mobile/index/index'
+import MobileRecord from '@pages/mobile/record/record'
 
 Vue.use(Router)
 
@@ -97,6 +98,13 @@ const router = new Router({
       path: '/mobileindex',
       name: 'mobileindex',
       component: MobileIndex,
+      meta: {
+        client: 'mobile'
+      }
+    },{
+      path: '/mobilerecord',
+      name: 'mobilerecord',
+      component: MobileRecord,
       meta: {
         client: 'mobile'
       }
