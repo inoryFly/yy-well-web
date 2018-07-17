@@ -46,6 +46,7 @@ export default {
       background-color: transparent;
     }
     .titlecontent{
+      padding: 44px 0 0 16px;
       color: white;
       font-size: 29px;
     }
