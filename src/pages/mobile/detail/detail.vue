@@ -13,8 +13,7 @@
             </div>
 
             <div class="urlwrap">
-                <div style="float:left">
-                    <img src="../../../images/twitter.png" >
+                <div class="middlepic">
                 </div>
             </div>
         </div>
@@ -48,6 +47,12 @@
         background-color: white;
         height: 115px;
         margin: 15px;
+    }
+    .middlepic{
+        height: 60px;
+        width: 30%;
+        background: url("../../../images/twitter.png") no-repeat center center;
+        background-size: 31px 31px;
     }
 }
 </style>
