@@ -64,7 +64,7 @@ export default {
   margin: 0 auto;
   margin-top: 70px;
 }
-.mobile {
+/* .mobile {
   margin-top: 40px;
-}
+} */
 </style>
