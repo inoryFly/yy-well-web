@@ -13,21 +13,23 @@
         <div>
             验证码已发送至 +86 <span></span>
         </div>
-        <div v-if="phone">
+        <div v-show="phone">
             <mt-field placeholder="请输入手机或者邮箱" v-model="account" v-bind:state="accountverify"></mt-field>
             <mt-field placeholder="请输入登陆密码" type="password" v-model="pwd"></mt-field>
             <div class="topath">
                 <span class="fr" @click="changeway(false)">短信验证登陆</span>
             </div>
+           
             <mt-button size="large" type="primary" @click="accountsubmit">登陆</mt-button>
         </div>
-        <div v-else>
+        <div v-show="!phone">
             <mt-field label="+86 >" placeholder="请输入手机号" type="tel" v-model="mobile"></mt-field>
-            <div id="__nc" style="margin-left:auto;margin-right:auto;width:80%;height:100px;padding-top:100px;">
-              <div id="nc"></div>
-            </div>
+            
             <div class="topath">
                 <span class="fr" @click="changeway(true)">账号登陆</span>
+            </div>
+             <div id="__nc" style="margin-left:auto;margin-right:auto;width:80%;height:100px;">
+              <div id="nc"></div>
             </div>
             <mt-button size="large" type="primary" @click="nextStep">下一步</mt-button>
         </div>
@@ -55,57 +57,62 @@ export default {
       captcha: undefined
     };
   },
-  mounted () {
-    var nc_token = ["FFFF0N00000000006266", (new Date()).getTime(), Math.random()].join(':');
-    var nc=NoCaptcha.init({
-        renderTo: '#nc',
-        appkey: 'FFFF0N00000000006266', 
-        scene: 'nc_message',
-        token: nc_token,
-        trans: {"key1": "code0"},
-        is_Opt: 0,
-        language: "cn",
-        timeout: 10000,
-        retryTimes: 5,
-        errorTimes: 5,
-        inline:false,
-        apimap: {
-            // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
-            // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
-        },
-        
-        callback: function (data) {
-            window.console && console.log(nc_token)
-            window.console && console.log(data.csessionid)
-            window.console && console.log(data.sig)
-            var params = {
-          'mobile': _this.ruleForm2.phone,
-          'token': {
-            'sig': data.sig,
-            'token': ncToken,
-            'csessionid': data.csessionid,
-            'scene':'well_sms'
+  mounted() {
+    var nc_token = [
+      "FFFF0N00000000006266",
+      new Date().getTime(),
+      Math.random()
+    ].join(":");
+    var nc = NoCaptcha.init({
+      renderTo: "#nc",
+      appkey: "FFFF0N00000000006266",
+      scene: "nc_message",
+      token: nc_token,
+      trans: { key1: "code0" },
+      is_Opt: 0,
+      language: "cn",
+      timeout: 10000,
+      retryTimes: 5,
+      errorTimes: 5,
+      inline: false,
+      apimap: {
+        // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
+        // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
+      },
+
+      callback: function(data) {
+        window.console && console.log(nc_token);
+        window.console && console.log(data.csessionid);
+        window.console && console.log(data.sig);
+        var params = {
+          mobile: _this.ruleForm2.phone,
+          token: {
+            sig: data.sig,
+            token: nc_token,
+            csessionid: data.csessionid,
+            scene: "well_h5"
           }
-        }
-        sendSms(params).then(res => {
-          if (res.data.success){
-            console.log('gg')
-          }
-        }).catch(error => console.log(error))
-        },
-        error: function (s) {
-        }
+        };
+        sendSms(params)
+          .then(res => {
+            if (res.data.success) {
+              console.log("gg");
+            }
+          })
+          .catch(error => console.log(error));
+      },
+      error: function(s) {}
     });
     NoCaptcha.setEnabled(true);
-    nc.reset();//请务必确保这里调用一次reset()方法
-    NoCaptcha.upLang('cn', {
-        'LOADING':"加载中...",//加载
-        'SLIDER_LABEL': "请向右滑动验证",//等待滑动
-        'CHECK_Y':"验证通过",//通过
-        'ERROR_TITLE':"非常抱歉，这出错了...",//拦截
-        'CHECK_N':"验证未通过", //准备唤醒二次验证
-        'OVERLAY_INFORM':"经检测你当前操作环境存在风险，请输入验证码",//二次验证
-        'TIPS_TITLE':"验证码错误，请重新输入"//验证码输错时的提示
+    nc.reset(); //请务必确保这里调用一次reset()方法
+    NoCaptcha.upLang("cn", {
+      LOADING: "加载中...", //加载
+      SLIDER_LABEL: "请向右滑动验证", //等待滑动
+      CHECK_Y: "验证通过", //通过
+      ERROR_TITLE: "非常抱歉，这出错了...", //拦截
+      CHECK_N: "验证未通过", //准备唤醒二次验证
+      OVERLAY_INFORM: "经检测你当前操作环境存在风险，请输入验证码", //二次验证
+      TIPS_TITLE: "验证码错误，请重新输入" //验证码输错时的提示
     });
   },
   watch: {

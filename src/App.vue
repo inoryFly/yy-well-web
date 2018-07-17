@@ -13,6 +13,7 @@
 
 <script>
 import '@src/styles/normalize.css'
+import '@src/styles/nc.css'
 import '../node_modules/swiper/dist/css/swiper.min.css'
 import qklHeader from '@components/header'
 import qklFooter from '@components/footer'
