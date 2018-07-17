@@ -1,6 +1,11 @@
 <template>
    <div class="page-tabbar">
-
+<div class="title">
+    <mt-header fixed>
+            <mt-button icon="search" slot="right"></mt-button>
+        </mt-header>
+        <div>项目列表</div>
+</div>
     <mt-tabbar v-model="selected" fixed>
       <mt-tab-item id="项目列表">
         <img slot="icon" src="../../../images/projectactive.png">
@@ -20,19 +25,24 @@
 
 <script>
 export default {
-  name: 'page-tabbar',
+  name: "page-tabbar",
   data() {
     return {
-      selected: '项目列表'
+      selected: "项目列表"
     };
   }
 };
 </script>
 
 <style>
-  .page-tabbar {
-    overflow: hidden;
-    height: 100vh;
-  }
-
+.page-tabbar {
+  overflow: hidden;
+  height: 100vh;
+}
+.title{
+    height: 97px;
+}
+.mint-header {
+  background-color: transparent;
+}
 </style>
