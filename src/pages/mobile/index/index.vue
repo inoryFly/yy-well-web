@@ -1,17 +1,9 @@
 <template>
    <div class="page-tabbar">
-    <div class="page-wrap">
-      <div class="page-title">Tabbar</div>
-      <div>
-        <mt-cell class="page-part" title="当前选中" :value="selected" />
-      </div>
-
-      
-    </div>
 
     <mt-tabbar v-model="selected" fixed>
       <mt-tab-item id="项目列表">
-        <img slot="icon" src="../../../images/project.png">
+        <img slot="icon" src="../../../images/projectactive.png">
         项目列表
       </mt-tab-item>
       <mt-tab-item id="众筹记录">
