@@ -15,34 +15,97 @@
     <div class="page-tab-container">
       <mt-tab-container class="page-tabbar-tab-container" v-model="active" swipeable>
         <mt-tab-container-item id="BEING">
-          <div class="contentwrap">
-          <div class="picwrap"></div>
-          <div style="float:right;">
-            <div class="maincontent">
-              <span>项目名称</span>
-              <span class="fr"></span>
-            </div>
-            <div class="simple">项目的家的就发链接发垃圾放大阿斯蒂芬</div>
-            <div class="badge">
-              <mt-badge size="small" color="#F5F8FA">美国</mt-badge>
-              <mt-badge size="small" color="#F5F8FA">公链</mt-badge>
-              <mt-badge size="small" color="#F5F8FA" style="float:right">开始时间：2018-05-01</mt-badge>
-            </div>
-            <div>
-              <div class="line">
-                <div class="progress"></div>
-                <span class="progressnumber">80%</span>
+           <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
+            <div class="picwrap"></div>
+            <div  class="contents">
+              <div class="maincontent">
+                <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
+                <span class="fr">
+                  <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                  <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
+                </span>
               </div>
-              <span style="float:right;margin-top: 3px;font-size: 12px;width:46px">700ETH</span>
+              <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
+              <div class="simples" v-else>{{item.intro}}</div>
+              <div class="badge">
+                <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
+                <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
+              </div>
+              <div v-if="item.progress !== 0">
+                <div class="line">
+                  <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
+                  <span class="progressnumber">{{item.progress}}%</span>
+                </div>
+                <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
+              </div>
             </div>
           </div>
-        </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="COMMING_SOON">
-          2
+          <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
+            <div class="picwrap"></div>
+            <div  class="contents">
+              <div class="maincontent">
+                <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
+                <span class="fr">
+                  <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                  <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
+                </span>
+              </div>
+              <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
+              <div class="simples" v-else>{{item.intro}}</div>
+              <div class="badge">
+                <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
+                <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
+              </div>
+              <div v-if="item.progress !== 0">
+                <div class="line">
+                  <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
+                  <span class="progressnumber">{{item.progress}}%</span>
+                </div>
+                <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
+              </div>
+            </div>
+          </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="FINISH">
-          3
+          <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
+            <div class="picwrap"></div>
+            <div  class="contents">
+              <div class="maincontent">
+                <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
+                <span class="fr">
+                  <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
+                  <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                  <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
+                </span>
+              </div>
+              <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
+              <div class="simples" v-else>{{item.intro}}</div>
+              <div class="badge">
+                <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
+                <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
+              </div>
+              <div v-if="item.progress !== 0">
+                <div class="line">
+                  <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
+                  <span class="progressnumber">{{item.progress}}%</span>
+                </div>
+                <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
+              </div>
+            </div>
+          </div>
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
@@ -169,6 +232,11 @@ export default {
     margin-bottom: 6px;
     font-weight: bold;
   }
+  .contents{
+    width: calc(100% - 70px);
+    padding-left: 10px;
+    float: right;
+  }
   .picwrap {
     height: 60px;
     width: 60px;
@@ -179,15 +247,30 @@ export default {
   }
   .fr {
     float: right;
-    padding-right: 20px;
     height: 20px;
+    span{
+padding-left: 20px;
+    }
+  }
+  .newstar{
     background: url("../../../images/star-on.png");
+  }
+  .starhalf{
+background: url("../../../images/star-half.png");
   }
   .simple {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     margin-bottom: 6px;
+  }
+  .simples{
+    overflow: hidden;
+    // white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
+    height: 40px;
+    line-height: 20px;
   }
   .badge {
     height: 20px;
@@ -206,14 +289,13 @@ export default {
   border-radius: 1px;
   background-color: #D8D8D8;
   margin-top: 12px;
-  width: calc(100% - 56px);
+  width: calc(100% - 70px);
 }
 .progress{
   height: 2px;
   background-color: #2179FE;
   border-radius: 1px;
   float: left;
-  width: 80%;
 }
 .progressnumber{
       font-size: 12px;

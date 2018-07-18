@@ -2,7 +2,7 @@
     <div>
         <div class="detailheader">
             <mt-header title="项目详情">
-                <mt-button icon="back" slot="left"></mt-button>
+                <mt-button icon="back" slot="left" @click="goreturn"></mt-button>
                 <mt-button  slot="right">
                     <img src="../../../images/share.png" width="16px;"/>
                 </mt-button>
@@ -25,9 +25,9 @@
         <div style="background-color:white;margin-top:60px;">
             <div class="describle">项目简介</div>
             <div class="shorttitle">基本信息</div>
-            <div style="border-bottom: 1px solid #efefef;padding:0 15px 15px;line-height:22px;">以太坊（英语：Ethereum）是一个开源的有智能合约功能的公共区块链平台。通过其专用加密货币以</div>
+            <div class="simpledesc">{{detailDatas.description}}</div>
             <div class="shorttitle">代币信息</div>
-            <div style="height:158px;padding:0 15px 15px;box-sizing:border-box;font-size:14px;line-height:26px;">
+            <div class="coinmessage">
                 <div style="float:left;width:50%;">
                     <div>名称：</div>
                     <div>众筹价格：</div>
@@ -62,9 +62,40 @@
     </div>
 </template>
 
+<script>
+import axios from "axios";
+export default {
+  data() {
+    return {
+      detailDatas: {},
+      isShowPanel: false
+    };
+  },
+  mounted () {
+    this.getDetail();
+  },
+  methods: {
+    goreturn () {
+      this.$router.go(-1)
+    },
+    getDetail () {
+      var id = window.location.href.split('=')[1]
+      var _this = this
+      axios.get('http://47.74.158.5:8889/project/info?projectId=' + id).then(res => {
+        if (res.data.success) {
+          _this.detailDatas = res.data.data
+        } else {
+          _this.$message(res.data.error)
+        }
+      }).catch(error => _this.$message(error))
+    }
+  }
+};
+</script>
+
+
 <style lang="scss" scoped>
 .detailheader {
-  
   .urlwrap {
     border-radius: 4px;
     background-color: white;
@@ -124,6 +155,12 @@
 .shorttitle {
   margin: 15px;
   font-weight: bold;
+}
+.simpledesc{
+border-bottom: 1px solid #efefef;padding:0 15px 15px;line-height:22px;
+}
+.coinmessage{
+  height:158px;padding:0 15px 15px;box-sizing:border-box;font-size:14px;line-height:26px;
 }
 </style>
 
