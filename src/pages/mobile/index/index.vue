@@ -8,13 +8,13 @@
     </div>
 
     <div class="nav">
-      <mt-button size="small" @click.native.prevent="active = 'container1'" :class="current">正在众筹</mt-button>
-      <mt-button size="small" @click.native.prevent="active = 'container2'" :class="current2">即将开始</mt-button>
-      <mt-button size="small" @click.native.prevent="active = 'container3'" :class="current3">已截止</mt-button>
+      <mt-button size="small" @click.native.prevent="switchMenu('BEING')" :class="current">正在众筹</mt-button>
+      <mt-button size="small" @click.native.prevent="switchMenu('COMMING_SOON')" :class="current2">即将开始</mt-button>
+      <mt-button size="small" @click.native.prevent="switchMenu('FINISH')" :class="current3">已截止</mt-button>
     </div>
     <div class="page-tab-container">
       <mt-tab-container class="page-tabbar-tab-container" v-model="active" swipeable>
-        <mt-tab-container-item id="container1">
+        <mt-tab-container-item id="BEING">
           <div class="contentwrap">
           <div class="picwrap"></div>
           <div style="float:right;">
@@ -38,10 +38,10 @@
           </div>
         </div>
         </mt-tab-container-item>
-        <mt-tab-container-item id="container2">
+        <mt-tab-container-item id="COMMING_SOON">
           2
         </mt-tab-container-item>
-        <mt-tab-container-item id="container3">
+        <mt-tab-container-item id="FINISH">
           3
         </mt-tab-container-item>
       </mt-tab-container>
@@ -65,30 +65,38 @@
 </template>
 
 <script>
+import axios from '../../../api/axios.conf.js'
 export default {
   name: "page-tabbar",
   data() {
     return {
       selected: "项目列表",
-      active: "container1"
+      active: "BEING",
+      dissUrl: 'http://47.74.158.5:8889',
+      currentPage:1,
+      totalPage:1,
+      contentList: [],
     };
   },
   computed: {
     current() {
       return {
-        activebutton: this.active === "container1"
+        activebutton: this.active === "BEING"
       };
     },
     current2() {
       return {
-        activebutton: this.active === "container2"
+        activebutton: this.active === "COMMING_SOON"
       };
     },
     current3() {
       return {
-        activebutton: this.active === "container3"
+        activebutton: this.active === "FINISH"
       };
     }
+  },
+  mounted () {
+    this.toList("BEING")
   },
   methods: {
     gopath(number) {
@@ -97,6 +105,22 @@ export default {
       } else {
         this.$router.push({ name: "mobilecenter" });
       }
+    },
+    switchMenu (id) {
+      this.active = id
+      this.currentPage = 1
+      this.toList(id)
+    },
+    toList (id) {
+      var _this=this;
+      var url=this.dissUrl + '/project/list?status='+ id + '&size=8&page=' + this.currentPage
+      axios(url).then(res => {
+        if(res.data.success){
+          _this.totalPage=res.data.data.totalPages
+          _this.currentPage=res.data.data.number
+          _this.contentList=res.data.data.content
+        }
+      })
     }
   }
 };
