@@ -12,6 +12,7 @@
       <mt-button size="small" @click.native.prevent="switchMenu('COMMING_SOON')" :class="current2">即将开始</mt-button>
       <mt-button size="small" @click.native.prevent="switchMenu('FINISH')" :class="current3">已截止</mt-button>
     </div>
+    
     <div class="page-tab-container">
       <mt-tab-container class="page-tabbar-tab-container" v-model="active" swipeable>
         <mt-tab-container-item id="BEING" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
@@ -44,11 +45,11 @@
               </div>
             </div>
           </div>
+          <div v-if="loading" class="myloading">
+        <mt-spinner type="fading-circle" ></mt-spinner>
+        加载中... 
+      </div>
         </mt-tab-container-item>
-        <p v-show="loading" >
-        <mt-spinner type="fading-circle"></mt-spinner>
-        加载中...
-      </p>
         <mt-tab-container-item id="COMMING_SOON" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
           <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
             <div class="picwrap"></div>
@@ -79,11 +80,12 @@
               </div>
             </div>
           </div>
+          <div v-if="loading" class="myloading">
+        <mt-spinner type="fading-circle" ></mt-spinner>
+        加载中... 
+      </div>
         </mt-tab-container-item>
-        <p v-show="loading" >
-        <mt-spinner type="fading-circle"></mt-spinner>
-        加载中...
-      </p>
+        
         <mt-tab-container-item id="FINISH" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
           <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
             <div class="picwrap"></div>
@@ -114,13 +116,16 @@
               </div>
             </div>
           </div>
+          <div v-if="loading" class="myloading">
+        <mt-spinner type="fading-circle" ></mt-spinner>
+        加载中... 
+      </div>
         </mt-tab-container-item>
+        
       </mt-tab-container>
-      <p v-show="loading" >
-        <mt-spinner type="fading-circle"></mt-spinner>
-        加载中...
-      </p>
+      
     </div>
+    
 
     <mt-tabbar v-model="selected" fixed>
       <mt-tab-item id="项目列表">
@@ -172,7 +177,7 @@ export default {
     }
   },
   mounted() {
-    this.toList("BEING");
+    this.toList("BEING", false);
   },
   methods: {
     gopath(number) {
@@ -189,27 +194,35 @@ export default {
     },
     toList(id, bool) {
       var _this = this;
+      if (!bool) {
+        this.contentList = [];
+      }
       var url =
         this.dissUrl +
         "/project/list?status=" +
         id +
         "&size=8&page=" +
         this.currentPage;
-      axios(url).then(res => {
-        if (res.data.success) {
-          _this.totalPage = res.data.data.totalPages;
-          _this.currentPage = res.data.data.number;
-          if (!bool) {
-            _this.contentList = res.data.data.content;
-          } else {
-            _this.contentList.push(res.data.data.content);
+      this.loading = true;
+      axios(url)
+        .then(res => {
+          if (res.data.success) {
+            _this.totalPage = res.data.data.totalPages;
+            _this.currentPage = res.data.data.number;
+            if (!bool) {
+              _this.contentList = res.data.data.content;
+            } else {
+              _this.contentList.push(res.data.data.content);
+            }
           }
-        }
-      });
+        })
+        .finally(() => {
+          _this.loading = false;
+        });
     },
     loadMore() {
-      this.loading = true;
       if (this.currentPage < this.totalPage) {
+        this.currentPage=this.currentPage+1;
         this.toList(this.active, true);
       }
     }
@@ -328,5 +341,22 @@ export default {
 .progressnumber {
   font-size: 12px;
   color: #2179fe;
+}
+</style>
+
+<style lang="scss">
+.page-tabbar-tab-container {
+  height: calc(100vh - 207px);
+}
+.mint-tab-container {
+  overflow: scroll !important;
+}
+.myloading {
+  text-align: center;
+  div {
+    display: inline-block;
+    vertical-align: middle !important;
+    margin-right: 5px !important;
+  }
 }
 </style>

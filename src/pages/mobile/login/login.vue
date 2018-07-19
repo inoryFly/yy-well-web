@@ -9,7 +9,7 @@
             </router-link>
         </mt-header>
         <div class="logintitle">欢迎登陆WELLICO</div>
-        <div class="logintitle">输入验证码</div>
+        <div class="logintitle" v-if="message">输入验证码</div>
         <div>
             验证码已发送至 +86 <span></span>
         </div>
@@ -54,21 +54,23 @@ export default {
       account: undefined,
       pwd: undefined,
       mobile: undefined,
-      captcha: undefined
+      captcha: undefined,
+      message: false
     };
   },
   mounted() {
-    var nc_token = [
+    var _this=this;
+    var ncToken = [
       "FFFF0N00000000006266",
-      new Date().getTime(),
+      (new Date()).getTime(),
       Math.random()
     ].join(":");
     var nc = NoCaptcha.init({
       renderTo: "#nc",
       appkey: "FFFF0N00000000006266",
       scene: "nc_message",
-      token: nc_token,
-      trans: { key1: "code0" },
+      token: ncToken,
+      trans: { 'key1': "code0" },
       is_Opt: 0,
       language: "cn",
       timeout: 10000,
@@ -79,16 +81,18 @@ export default {
         // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
         // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
       },
-
+        bannerHidden:false,
+        initHidden:false,
       callback: function(data) {
-        window.console && console.log(nc_token);
+        window.console && console.log(ncToken);
         window.console && console.log(data.csessionid);
         window.console && console.log(data.sig);
+        console.log(_this.mobile)
         var params = {
-          mobile: _this.ruleForm2.phone,
+          mobile: _this.mobile,
           token: {
             sig: data.sig,
-            token: nc_token,
+            token: ncToken,
             csessionid: data.csessionid,
             scene: "well_h5"
           }
@@ -96,24 +100,18 @@ export default {
         sendSms(params)
           .then(res => {
             if (res.data.success) {
-              console.log("gg");
+              _this.$message('发送成功')
+            }else{
+              // nc.reload()
+            _this.$message.error(res.data.error)
             }
           })
-          .catch(error => console.log(error));
+          .catch(error => _this.$message.error(error));
       },
       error: function(s) {}
     });
     NoCaptcha.setEnabled(true);
     nc.reset(); //请务必确保这里调用一次reset()方法
-    NoCaptcha.upLang("cn", {
-      LOADING: "加载中...", //加载
-      SLIDER_LABEL: "请向右滑动验证", //等待滑动
-      CHECK_Y: "验证通过", //通过
-      ERROR_TITLE: "非常抱歉，这出错了...", //拦截
-      CHECK_N: "验证未通过", //准备唤醒二次验证
-      OVERLAY_INFORM: "经检测你当前操作环境存在风险，请输入验证码", //二次验证
-      TIPS_TITLE: "验证码错误，请重新输入" //验证码输错时的提示
-    });
   },
   watch: {
     account() {
@@ -192,6 +190,7 @@ export default {
   font-size: 28px;
   line-height: 78px;
   padding-left: 26px;
+  margin-top: 40px;
 }
 .topath {
   height: 40px;

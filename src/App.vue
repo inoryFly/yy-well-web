@@ -25,7 +25,7 @@ export default {
   },
   data () {
     return {
-      pc: false
+      pc:true
     }
   },
   beforeMount () {
