@@ -14,7 +14,7 @@
     </div>
     <div class="page-tab-container">
       <mt-tab-container class="page-tabbar-tab-container" v-model="active" swipeable>
-        <mt-tab-container-item id="BEING">
+        <mt-tab-container-item id="BEING" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
            <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
             <div class="picwrap"></div>
             <div  class="contents">
@@ -45,7 +45,11 @@
             </div>
           </div>
         </mt-tab-container-item>
-        <mt-tab-container-item id="COMMING_SOON">
+        <p v-show="loading" >
+        <mt-spinner type="fading-circle"></mt-spinner>
+        加载中...
+      </p>
+        <mt-tab-container-item id="COMMING_SOON" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
           <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
             <div class="picwrap"></div>
             <div  class="contents">
@@ -76,7 +80,11 @@
             </div>
           </div>
         </mt-tab-container-item>
-        <mt-tab-container-item id="FINISH">
+        <p v-show="loading" >
+        <mt-spinner type="fading-circle"></mt-spinner>
+        加载中...
+      </p>
+        <mt-tab-container-item id="FINISH" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
           <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
             <div class="picwrap"></div>
             <div  class="contents">
@@ -108,6 +116,10 @@
           </div>
         </mt-tab-container-item>
       </mt-tab-container>
+      <p v-show="loading" >
+        <mt-spinner type="fading-circle"></mt-spinner>
+        加载中...
+      </p>
     </div>
 
     <mt-tabbar v-model="selected" fixed>
@@ -128,17 +140,18 @@
 </template>
 
 <script>
-import axios from '../../../api/axios.conf.js'
+import axios from "../../../api/axios.conf.js";
 export default {
   name: "page-tabbar",
   data() {
     return {
       selected: "项目列表",
       active: "BEING",
-      dissUrl: 'http://47.74.158.5:8889',
-      currentPage:1,
-      totalPage:1,
+      dissUrl: "http://47.74.158.5:8889",
+      currentPage: 1,
+      totalPage: 1,
       contentList: [],
+      loading: false
     };
   },
   computed: {
@@ -158,8 +171,8 @@ export default {
       };
     }
   },
-  mounted () {
-    this.toList("BEING")
+  mounted() {
+    this.toList("BEING");
   },
   methods: {
     gopath(number) {
@@ -169,21 +182,36 @@ export default {
         this.$router.push({ name: "mobilecenter" });
       }
     },
-    switchMenu (id) {
-      this.active = id
-      this.currentPage = 1
-      this.toList(id)
+    switchMenu(id) {
+      this.active = id;
+      this.currentPage = 1;
+      this.toList(id, false);
     },
-    toList (id) {
-      var _this=this;
-      var url=this.dissUrl + '/project/list?status='+ id + '&size=8&page=' + this.currentPage
+    toList(id, bool) {
+      var _this = this;
+      var url =
+        this.dissUrl +
+        "/project/list?status=" +
+        id +
+        "&size=8&page=" +
+        this.currentPage;
       axios(url).then(res => {
-        if(res.data.success){
-          _this.totalPage=res.data.data.totalPages
-          _this.currentPage=res.data.data.number
-          _this.contentList=res.data.data.content
+        if (res.data.success) {
+          _this.totalPage = res.data.data.totalPages;
+          _this.currentPage = res.data.data.number;
+          if (!bool) {
+            _this.contentList = res.data.data.content;
+          } else {
+            _this.contentList.push(res.data.data.content);
+          }
         }
-      })
+      });
+    },
+    loadMore() {
+      this.loading = true;
+      if (this.currentPage < this.totalPage) {
+        this.toList(this.active, true);
+      }
     }
   }
 };
@@ -232,7 +260,7 @@ export default {
     margin-bottom: 6px;
     font-weight: bold;
   }
-  .contents{
+  .contents {
     width: calc(100% - 70px);
     padding-left: 10px;
     float: right;
@@ -248,15 +276,15 @@ export default {
   .fr {
     float: right;
     height: 20px;
-    span{
-padding-left: 20px;
+    span {
+      padding-left: 20px;
     }
   }
-  .newstar{
+  .newstar {
     background: url("../../../images/star-on.png");
   }
-  .starhalf{
-background: url("../../../images/star-half.png");
+  .starhalf {
+    background: url("../../../images/star-half.png");
   }
   .simple {
     overflow: hidden;
@@ -264,7 +292,7 @@ background: url("../../../images/star-half.png");
     text-overflow: ellipsis;
     margin-bottom: 6px;
   }
-  .simples{
+  .simples {
     overflow: hidden;
     // white-space: nowrap;
     text-overflow: ellipsis;
@@ -285,20 +313,20 @@ background: url("../../../images/star-half.png");
 }
 .line {
   float: left;
- height: 2px;
+  height: 2px;
   border-radius: 1px;
-  background-color: #D8D8D8;
+  background-color: #d8d8d8;
   margin-top: 12px;
   width: calc(100% - 70px);
 }
-.progress{
+.progress {
   height: 2px;
-  background-color: #2179FE;
+  background-color: #2179fe;
   border-radius: 1px;
   float: left;
 }
-.progressnumber{
-      font-size: 12px;
-    color: #2179FE;
+.progressnumber {
+  font-size: 12px;
+  color: #2179fe;
 }
 </style>
