@@ -89,7 +89,7 @@ const router = new Router({
       }
     },
     {
-      path: '/binding',
+      path: '/binding/:type',
       name: 'mobilebinding',
       component: Binding,
       meta: {
@@ -145,7 +145,6 @@ router.beforeEach((to, from, next) => {
       router.push({ name: 'mobileindex' })
     }else if(to.meta.requireAuth){
       if(!sessionStorage.getItem('isLogin')){
-        console.log('这儿')
         router.push({name:"mobilelogin"})
       }
     }

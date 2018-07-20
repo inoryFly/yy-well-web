@@ -1,46 +1,49 @@
 <template>
     <div>
         <mt-header fixed>
-            <router-link to="/" slot="left">
-                <mt-button icon="back"></mt-button>
-            </router-link>
+            <mt-button icon="back" slot="left" @click="goreturn"></mt-button>
         </mt-header>
-        <div v-if="regitster" class="logintitle">请设置登陆密码</div>
+        <div v-if="regitster" class="logintitle verifytitle">请设置登陆密码</div>
         <div v-else class="logintitle">欢迎注册WELLICO</div>
-        <div v-if="phone">
+       
+        <div v-if="regitster">
+             <mt-field placeholder="请输入登陆密码" type="password"></mt-field>
+            <mt-field placeholder="请再次输入登陆密码" type="password"></mt-field>
+            <div class="topath">
+                <span class="fl bluecolor">邮箱注册</span>
+                <router-link to="/login" class="fr">立即登录</router-link>
+            </div>
+            <mt-button size="large" type="primary">注册并登陆</mt-button>
+        </div>
+        <div v-else>
+             <div v-if="phone">
             <mt-field placeholder="请输入注册邮箱" v-model="email"></mt-field>
             <mt-field placeholder="请设置登陆密码" type="password" v-model="pwd"></mt-field>
             <mt-field placeholder="请再次输入登陆密码" type="password" v-model="repwd"></mt-field>
             <div class="topath">
-                <span class="fl">
+                <span class="fl bluecolor" @click="phoneregister">
                    手机号注册
                 </span>
-                <router-link to="/" class="fr">
+                <router-link to="/login" class="fr">
                     立即登录
                 </router-link>
             </div>
             <mt-button size="large" type="primary" @click="submitForm1">注册并登陆</mt-button>
         </div>
         <div v-else>
-            <mt-field label="+86 >" placeholder="请输入手机号" type="number"></mt-field>
+            <mt-field label="+86" class="myphone" placeholder="请输入手机号" type="number">
+                <img src="../../../images/arrow.png" class="arrow" alt="">
+            </mt-field>
             <div class="topath">
-               <span class="fl">
+               <span class="fl bluecolor">
                    邮箱注册
                 </span>
-                <router-link to="/" class="fr">
+                <router-link to="/login" class="fr">
                     立即登录
                 </router-link>
             </div>
-            <mt-button size="large" type="primary">下一步</mt-button>
+            <mt-button size="large" type="primary" @click="nextstep">下一步</mt-button>
         </div>
-        <div v-if="regitster">
-             <mt-field placeholder="请输入登陆密码" type="password"></mt-field>
-            <mt-field placeholder="请再次输入登陆密码" type="password"></mt-field>
-            <div class="topath">
-                <span class="fl">邮箱注册</span>
-                <router-link to="/" class="fr">立即登录</router-link>
-            </div>
-            <mt-button size="large" type="primary">注册并登陆</mt-button>
         </div>
     </div>
 </template>
@@ -58,8 +61,17 @@ export default {
     }
   },
   methods: {
+    goreturn () {
+        this.$router.go(-1)
+    },
     submitForm1 () {
 
+    },
+    phoneregister () {
+        this.phone=!this.phone
+    },
+    nextstep () {
+        this.regitster = true;
     }
   }
 }
@@ -73,24 +85,17 @@ export default {
 .mint-cell-wrapper {
   border-bottom: 1px solid #e0e0e0;
 }
-.logintitle{
-    height: 78px;
-    font-size: 28px;
-    line-height: 78px;
-    padding-left: 26px;
-    margin-top: 40px;
-}
 .topath{
-    height: 40px;
+    height: 80px;
     line-height: 40px;
 }
 .fr{
     float: right;
-    padding-right: 28px;
+    padding-right: 16px;
 }
 .fl{
     float: left;
-    padding-left: 28px;
+    padding-left: 16px;
 }
 .mint-button--large{
     width: 90%;

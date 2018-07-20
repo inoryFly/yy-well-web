@@ -179,6 +179,11 @@ export default {
   mounted() {
     this.toList("BEING", false);
   },
+  watch:{
+    active () {
+      this.toList(this.active,false)
+    }
+  },
   methods: {
     gopath(number) {
       if (number === 1) {
