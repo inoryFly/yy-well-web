@@ -103,21 +103,22 @@ const router = new Router({
       meta: {
         client: 'mobile'
       }
-    },{
+    }, {
       path: '/mobilerecord',
       name: 'mobilerecord',
       component: MobileRecord,
       meta: {
-        client: 'mobile'
+        client: 'mobile',
+        requireAuth: true
       }
-    },{
+    }, {
       path: '/mobiledetail',
       name: 'mobiledetail',
       component: MobileDetail,
       meta: {
         client: 'mobile'
       }
-    },{
+    }, {
       path: '/mobileactive',
       name: 'mobiledactive',
       component: MobileActive,
@@ -129,27 +130,30 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  // let sUserAgent = navigator.userAgent.toLowerCase()
-  // let bIsIpad = sUserAgent.match(/ipad/) === 'ipad'
-  // let bIsIphone = sUserAgent.match(/iphone/) === 'iphone'
-  // let bIsMidp = sUserAgent.match(/midp/) === 'midp'
-  // let bIsUc7 = sUserAgent.match(/rv:1.2.3.4/) === 'rv:1.2.3.4'
-  // let bIsUc = sUserAgent.match(/ucweb/) === 'web'
-  // let bIsCE = sUserAgent.match(/windows ce/) === 'windows ce'
-  // let bIsWM = sUserAgent.match(/windows mobile/) === 'windows mobile'
-  // let bIsAndroid = sUserAgent.match(/android/) === 'android'
-  // console.log(sUserAgent)
-  // console.log(bIsIphone)
-  // if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM || bIsAndroid) {
-  //   if (to.matched.some(ele => ele.meta.client !== 'moblie')) {
-  //     console.log('test')
-  //     router.push({ name: 'mobilelogin' })
-  //   }
-  // } else {
-  //   if (to.matched.some(ele => ele.meta.client === 'moblie')) {
-  //     router.push({ name: 'index' })
-  //   }
-  // }
+  let sUserAgent = navigator.userAgent.toLowerCase()
+  let bIsIpad = /ipad/i.test(sUserAgent)
+  let bIsIphone = /iphone os/i.test(sUserAgent)
+  let bIsMidp = /midp/i.test(sUserAgent)
+  let bIsUc7 = /rv:1.2.3.4/i.test(sUserAgent)
+  let bIsUc = /ucweb/i.test(sUserAgent)
+  let bIsCE = /windows ce/i.test(sUserAgent)
+  let bIsWM = /windows mobile/i.test(sUserAgent)
+  let bIsAndroid = /android/i.test(sUserAgent)
+  
+  if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM || bIsAndroid) {
+    if (to.meta.client !== 'mobile') {
+      router.push({ name: 'mobileindex' })
+    }else if(to.meta.requireAuth){
+      if(!sessionStorage.getItem('isLogin')){
+        console.log('这儿')
+        router.push({name:"mobilelogin"})
+      }
+    }
+  } else {
+    if (to.matched.some(ele => ele.meta.client === 'moblie')) {
+      router.push({ name: 'index' })
+    }
+  }
   next()
 })
 

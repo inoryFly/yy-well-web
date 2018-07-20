@@ -1,10 +1,8 @@
 <template>
     <div>
         <mt-header fixed>
-            <router-link to="/login" slot="left">
-                <mt-button icon="back"></mt-button>
-            </router-link>
-            <router-link to="/register" slot="right">
+                <mt-button icon="back" slot="left" @click="goreturn"></mt-button>
+            <router-link to="/mobileregister" slot="right">
                 <mt-button >注册</mt-button>
             </router-link>
         </mt-header>
@@ -34,13 +32,7 @@
             <mt-button size="large" type="primary" @click="nextStep">下一步</mt-button>
         </div>
 
-        <!-- <div >
-            
-            <div>
-                <mt-field label="+86 >" placeholder="请输入手机号" type="tel"></mt-field>
-            </div>
-            <mt-button size="large" type="primary" @click="mobilesubmit">登陆</mt-button>
-        </div> -->
+       
     </div>
 </template>
 
@@ -59,10 +51,10 @@ export default {
     };
   },
   mounted() {
-    var _this=this;
+    var _this = this;
     var ncToken = [
       "FFFF0N00000000006266",
-      (new Date()).getTime(),
+      new Date().getTime(),
       Math.random()
     ].join(":");
     var nc = NoCaptcha.init({
@@ -70,7 +62,7 @@ export default {
       appkey: "FFFF0N00000000006266",
       scene: "nc_message",
       token: ncToken,
-      trans: { 'key1': "code0" },
+      trans: { key1: "code0" },
       is_Opt: 0,
       language: "cn",
       timeout: 10000,
@@ -81,13 +73,13 @@ export default {
         // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
         // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
       },
-        bannerHidden:false,
-        initHidden:false,
+      bannerHidden: false,
+      initHidden: false,
       callback: function(data) {
         window.console && console.log(ncToken);
         window.console && console.log(data.csessionid);
         window.console && console.log(data.sig);
-        console.log(_this.mobile)
+        console.log(_this.mobile);
         var params = {
           mobile: _this.mobile,
           token: {
@@ -100,10 +92,10 @@ export default {
         sendSms(params)
           .then(res => {
             if (res.data.success) {
-              _this.$message('发送成功')
-            }else{
+              _this.$message("发送成功");
+            } else {
               // nc.reload()
-            _this.$message.error(res.data.error)
+              _this.$message.error(res.data.error);
             }
           })
           .catch(error => _this.$message.error(error));
@@ -127,12 +119,16 @@ export default {
     }
   },
   methods: {
+    goreturn() {
+      this.$router.go(-1);
+    },
     changeway(bool) {
       this.phone = bool;
     },
     accountsubmit() {
       if (this.accountverify === "success") {
         let params = { username: this.account, password: this.pwd };
+        var _this = this;
         login(params)
           .then(res => {
             if (res.data.success) {
@@ -141,14 +137,14 @@ export default {
                 sessionStorage.setItem("isLogin", true);
               }
             } else {
-              console.log("这里需要模态框");
+              _this.$message.error("登陆失败，请重新登陆")
             }
           })
           .catch(error => {
-            console.log(error);
+            _this.$message.error(error);
           });
       } else {
-        console.log("验证不通过，请重新填写");
+        _this.$message.error("验证不通过，请重新填写");
         return false;
       }
     },
@@ -160,6 +156,7 @@ export default {
         mobile: this.mobile,
         captcha: this.captcha
       };
+      var _this =this;
       loginMobile(params1)
         .then(res => {
           if (res.data.success) {
@@ -168,7 +165,7 @@ export default {
               sessionStorage.setItem("isLogin", true);
             }
           } else {
-            console.log("输出错误");
+            _this.$message.error("输出错误");
           }
         })
         .catch(err => console.log("输出错误"));

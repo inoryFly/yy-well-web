@@ -30,19 +30,19 @@ export default {
   },
   beforeMount () {
     let sUserAgent = navigator.userAgent.toLowerCase()
-    let bIsIpad = sUserAgent.match(/ipad/i) === 'ipad'
-    let bIsIphone = sUserAgent.match(/iphone os/i) === 'iphone os'
-    let bIsMidp = sUserAgent.match(/midp/i) === 'midp'
-    let bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) === 'rv:1.2.3.4'
-    let bIsUc = sUserAgent.match(/ucweb/i) === 'web'
-    let bIsCE = sUserAgent.match(/windows ce/i) === 'windows ce'
-    let bIsWM = sUserAgent.match(/windows mobile/i) === 'windows mobile'
-    let bIsAndroid = sUserAgent.match(/android/i) === 'android'
+    let bIsIpad =  /ipad/i.test(sUserAgent)
+    let bIsIphone = /iphone os/i.test(sUserAgent) 
+    let bIsMidp = /midp/i.test(sUserAgent)
+    let bIsUc7 = /rv:1.2.3.4/i.test(sUserAgent)
+    let bIsUc = /ucweb/i.test(sUserAgent)
+    let bIsCE = /windows ce/i.test(sUserAgent)
+    let bIsWM = /windows mobile/i.test(sUserAgent)
+    let bIsAndroid = /android/i.test(sUserAgent)
 
     if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM || bIsAndroid) {
       this.pc = false
     } else {
-      this.pc = false
+      this.pc = true
     }
   }
 }
