@@ -9,7 +9,7 @@
             <mt-cell title="绑定邮箱" is-link @click.native="gobind('email')">
                 <span style="color:#2179FE" >去绑定</span>
             </mt-cell>
-            <mt-cell title="绑定手机号" is-link style="margin-bottom:15px" @click.native="gobind('phone')">
+            <mt-cell title="绑定手机号" is-link style="margin-bottom:15px" @click.native="gobind('mobile')">
                 <span style="color:#2179FE" >去绑定safd</span>
             </mt-cell>
             <mt-cell title="绑定以太坊钱包" is-link @click.native="gobind('pocket')">
@@ -44,13 +44,20 @@ export default {
       selected: "个人中心"
     };
   },
-  methods:{
-      goreturn (number) {
-              this.$router.go(-1)  
-      },
-      gobind (active) {
-          this.$router.push({name:"mobilebinding",params:{type:active}})
+  methods: {
+    goreturn() {
+      this.$router.go(-1);
+    },
+    gopath(number) {
+      if (number === 1) {
+        this.$router.push({ name: "mobileindex" });
+      } else {
+        this.$router.push({ name: "mobilerecord" });
       }
+    },
+    gobind(active) {
+      this.$router.push({ name: "mobilebinding", params: { type: active } });
+    }
   }
 };
 </script>
@@ -60,17 +67,17 @@ export default {
   overflow: hidden;
   height: 100vh;
 }
-.content{
-    margin-top: 55px;
+.content {
+  margin-top: 55px;
 }
 </style>
 
 <style lang="scss">
-.mint-cell-value.is-link{
-        margin-right: 24px;
-        font-size: 14px;
-    word-break: break-all;
-    max-width: 52%;
-    padding:8px;
+.mint-cell-value.is-link {
+  margin-right: 24px;
+  font-size: 14px;
+  word-break: break-all;
+  max-width: 52%;
+  padding: 8px;
 }
 </style>

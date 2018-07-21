@@ -149,7 +149,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    if (to.matched.some(ele => ele.meta.client === 'moblie')) {
+    if (to.meta.client == 'mobile') {
       router.push({ name: 'index' })
     }
   }
