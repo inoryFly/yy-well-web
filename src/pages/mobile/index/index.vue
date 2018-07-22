@@ -46,9 +46,9 @@
             </div>
           </div>
           <div v-if="loading" class="myloading">
-        <mt-spinner type="fading-circle" ></mt-spinner>
-        加载中... 
-      </div>
+            <mt-spinner type="fading-circle" ></mt-spinner>
+            加载中... 
+          </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="COMMING_SOON" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
           <div class="contentwrap" v-for="(item,index) in contentList" :key="index">

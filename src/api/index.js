@@ -25,6 +25,9 @@ export function getUserInfo (params) {
 export function userInfo (params) {
   return axios.post(url.userInfo, params)
 }
+export function userInfoList (params) {
+  return axios.post(url.userInfoList, params)
+}
 export function login (params) {
   return axios.post(url.login, params)
 }
@@ -36,6 +39,12 @@ export function sendSms (params) {
 }
 export function mailReg (params) {
   return axios.post(url.mail_reg)
+}
+export function mobileReg (params) {
+  return axios.post (url.mobile_reg)
+}
+export function mobilePwd (params) {
+  return axios.post (url.mobile_pwd)
 }
 export function mailResult (key) {
   return axios.get(`${url.mail_result}${key}`)

@@ -5,13 +5,13 @@
         </mt-header>
 
         <mt-navbar class="pagepart" v-model="selected">
-            <mt-tab-item id="1">全部</mt-tab-item>
-            <mt-tab-item id="2">待发币</mt-tab-item>
-            <mt-tab-item id="3">已完成</mt-tab-item>
+            <mt-tab-item id="ALL">全部</mt-tab-item>
+            <mt-tab-item id="INIT">待发币</mt-tab-item>
+            <mt-tab-item id="FINAL">已完成</mt-tab-item>
         </mt-navbar>
 
         <mt-tab-container v-model="selected">
-      <mt-tab-container-item id="1">
+      <mt-tab-container-item id="ALL">
         <div class="contentwrap">
           <div class="picwrap"></div>
           <div class="worddesc">
@@ -39,10 +39,10 @@
           </div>
         </div>
       </mt-tab-container-item>
-      <mt-tab-container-item id="2">
+      <mt-tab-container-item id="INIT">
         2
       </mt-tab-container-item>
-      <mt-tab-container-item id="3">
+      <mt-tab-container-item id="FINAL">
        3
       </mt-tab-container-item>
     </mt-tab-container>
@@ -50,16 +50,28 @@
 </template>
 
 <script>
+import axios from '../../../api/axios.conf.js'
 export default {
   name: "page-tabbar",
   data() {
     return {
-      selected: "1"
+      selected: "ALL"
     };
+  },
+  mountd () {
+    this.getList();
+  },
+  watch:{
+    selected () {
+      this.getList()
+    }
   },
   methods:{
       goback () {
         this.$router.go(-1)
+      },
+      getList () {
+
       }
   }
 };

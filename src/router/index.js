@@ -145,6 +145,7 @@ router.beforeEach((to, from, next) => {
       router.push({ name: 'mobileindex' })
     }else if(to.meta.requireAuth){
       if(!sessionStorage.getItem('isLogin')){
+        sessionStorage.setItem('nextpath',to.name)
         router.push({name:"mobilelogin"})
       }
     }

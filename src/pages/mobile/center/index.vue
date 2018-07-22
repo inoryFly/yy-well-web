@@ -7,14 +7,16 @@
 
         <div class="content">
             <mt-cell title="绑定邮箱" is-link @click.native="gobind('email')">
-                <span style="color:#2179FE" >去绑定</span>
+                <span style="color:#2179FE" v-if="email.value === ''">去绑定</span>
+                <span style="color:#2179FE" v-else>{{email.value}}</span>
             </mt-cell>
             <mt-cell title="绑定手机号" is-link style="margin-bottom:15px" @click.native="gobind('mobile')">
-                <span style="color:#2179FE" >去绑定safd</span>
+                <span style="color:#2179FE" v-if="mobile.value === ''">去绑定</span>
+                <span style="color:#2179FE" v-else>{{mobile.value}}</span>
             </mt-cell>
             <mt-cell title="绑定以太坊钱包" is-link @click.native="gobind('pocket')">
-                <!-- <span style="color:#2179FE">去绑定</span> -->
-                <span style="color:#666666">i8d7dSsaA8aejnjkHjsSkleh3fi8d7dSsaA8aejnjkHjsSkleh3f</span>
+                <span style="color:#2179FE" v-if="pocket.value === ''">去绑定</span>
+                <span style="color:#666666" v-else>{{pocket.value}}</span>
             </mt-cell>
         </div>
 
@@ -22,7 +24,6 @@
       <mt-tab-item id="项目列表" @click.native="gopath(1)">
       <img slot="icon" src="../../../images/project.png">
         项目列表
-      
       </mt-tab-item>
       <mt-tab-item id="众筹记录" @click.native="gopath(2)">
         <img slot="icon" src="../../../images/record.png">
@@ -37,12 +38,25 @@
 </template>
 
 <script>
+import {userInfoList} from '../../../api/'
 export default {
   name: "page-tabbar",
   data() {
     return {
-      selected: "个人中心"
+      selected: "个人中心",
+      mobile: {status:"",value:""},
+      email: {status:"",value:""},
+      pocket: {status:"",value:""}
     };
+  },
+  mounted () {
+    userInfoList().then( res =>{
+        if(res.data.success){
+          this.mobile=res.data.data.phone
+          this.email=res.data.data.email
+          this.pocket=res.data.data.eth
+        }
+      })
   },
   methods: {
     goreturn() {
@@ -56,7 +70,16 @@ export default {
       }
     },
     gobind(active) {
-      this.$router.push({ name: "mobilebinding", params: { type: active } });
+      if(this[active].status === 'UPDATE'){
+        this.$router.push({ name: "mobilebinding", params: { type: active } });
+      }else if(this[active].value == "" && this[active].status !== 'AUTH'){
+        this.$router.push({ name: "mobilebinding", params: { type: active } });
+      }else if (this[active].value == "" && this[active].status === 'AUTH'){
+        this.$message.error("请先完成实名认证")
+      }else if(this[active] === 'FINAL'){
+        this.$message.error("该信息不可更改")
+      }
+      
     }
   }
 };

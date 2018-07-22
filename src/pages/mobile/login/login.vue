@@ -16,8 +16,8 @@
         <div v-if="!message">
           <div v-show="phone">
               <mt-field placeholder="请输入手机或者邮箱" v-model="account" v-bind:state="accountverify"></mt-field>
-              <mt-field placeholder="请输入登陆密码" type="password" v-model="pwd">
-                <img src="../../../images/closeeye.png" style="height:14px">
+              <mt-field placeholder="请输入登陆密码" type="password" v-model="pwd" >
+                <img src="../../../images/closeeye.png" style="height:14px" v-if="inputing">
               </mt-field>
               <div class="topath">
                   <span class="fr" @click="changeway(false)">短信验证登陆</span>
@@ -41,10 +41,10 @@
         </div>
         <div v-else>
           <div class="inputverify">
-            <div class="verifymessage"><mt-field disableClear></mt-field></div>
-            <div class="verifymessage"><mt-field disableClear></mt-field></div>
-            <div class="verifymessage"><mt-field disableClear></mt-field></div>
-            <div class="verifymessage"><mt-field disableClear></mt-field></div>
+            <div class="verifymessage"><mt-field disableClear v-model="first"></mt-field></div>
+            <div class="verifymessage"><mt-field disableClear v-model="second"></mt-field></div>
+            <div class="verifymessage"><mt-field disableClear v-model="third"></mt-field></div>
+            <div class="verifymessage"><mt-field disableClear v-model="fourth"></mt-field></div>
           </div>
           <div class="bluecolor" style="padding:0 30px 26px 16px">重新获取验证码</div>
           <mt-button size="large" type="primary" @click="nextStep">登录</mt-button>
@@ -68,7 +68,13 @@ export default {
       captcha: undefined,
       message: false,
       minute: 60,
-      time: undefined
+      time: undefined,
+      inputing:false,
+      messageSuccess:false,
+      first:undefined,
+      second:undefined,
+      third:undefined,
+      fourth:undefined
     };
   },
   updated() {
@@ -113,7 +119,8 @@ export default {
           sendSms(params)
             .then(res => {
               if (res.data.success) {
-                _this.$message("发送成功");
+                _this.$message.success("发送成功");
+                _this.messageSuccess=true;
               } else {
                 // nc.reload()
                 _this.$message.error(res.data.error);
@@ -139,17 +146,24 @@ export default {
         this.accountverify = "success";
       }
     },
+    pwd () {
+      if(!this.pwd){
+        this.inputing=false
+      }else{
+        this.inputing=true
+      } 
+    },
     minute () {
       if(this.minute === 0){
         this.minute = 60
         clearInterval(this.time);
         this.time = setInterval(() => {
-        if (this.minute > 0) {
-          this.minute = this.minute - 1;
-        } else {
-          clearInterval(this.time);
-        }
-      }, 1000);
+          if (this.minute > 0) {
+            this.minute = this.minute - 1;
+          } else {
+            clearInterval(this.time);
+          }
+        }, 1000);
       }
     }
   },
@@ -166,9 +180,9 @@ export default {
       this.phone = bool;
     },
     accountsubmit() {
+      var _this = this;
       if (this.accountverify === "success") {
-        let params = { username: this.account, password: this.pwd };
-        var _this = this;
+        let params = { username: this.account, password: this.pwd };  
         login(params)
           .then(res => {
             if (res.data.success) {
@@ -176,6 +190,7 @@ export default {
               if (res.data.data.token) {
                 sessionStorage.setItem("isLogin", true);
               }
+              this.$router.push({name:sessionStorage.getItem('nextpath')})
             } else {
               _this.$message.error("登陆失败，请重新登陆");
             }
@@ -185,24 +200,35 @@ export default {
           });
       } else {
         _this.$message.error("验证不通过，请重新填写");
-        return false;
+        
       }
     },
     nextStep() {
-      this.message = true;
-      this.minute = 60;
-      this.time = setInterval(() => {
-        if (this.minute > 0) {
-          this.minute = this.minute - 1;
-        } else {
-          clearInterval(this.time);
-        }
-      }, 1000);
+      if(this.messageSuccess){
+          this.message = true;
+          this.minute = 60;
+          this.time = setInterval(() => {
+            if (this.minute > 0) {
+              this.minute = this.minute - 1;
+            } else {
+              clearInterval(this.time);
+            }
+          }, 1000);
+      }else{
+        this.$message.error("请先完成相应信息验证")
+      }
     },
     mobilesubmit() {
+      if(!this.first&&!this.second&&!this.third&&!this.fourth){
+        this.$message.error("请输入验证码")
+        return;
+      }else if(!this.first||!this.second||!this.third||!this.fourth){
+        this.$message.error("验证码格式不对")
+        return;
+      }
       var params1 = {
         mobile: this.mobile,
-        captcha: this.captcha
+        captcha: ""+this.first+this.second+this.third+this.fourth
       };
       var _this = this;
       loginMobile(params1)
@@ -212,6 +238,7 @@ export default {
             if (res.data.token) {
               sessionStorage.setItem("isLogin", true);
             }
+            this.$router.push({name:sessionStorage.getItem("nextpath")})
           } else {
             _this.$message.error("登陆失败");
           }

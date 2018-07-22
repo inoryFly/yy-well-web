@@ -3,22 +3,22 @@
         <div class="detailheader">
             <mt-header title="项目详情">
                 <mt-button icon="back" slot="left" @click="goreturn"></mt-button>
-                <mt-button  slot="right">
+                <!-- <mt-button  slot="right">
                     <img src="../../../images/share.png" width="16px;"/>
-                </mt-button>
+                </mt-button> -->
             </mt-header>
 
              <div class="photo">
-                    <img src="../../../images/github.png" class="realphoto"/>
+                    <img :src="detailDatas.iconUrl" class="realphoto"/>
             </div>
 
 
-            <div class="urlwrap">
-                <div class="middlepic"></div>
-                <div class="telegram"></div>
-                <div class="github"></div>
-                <router-link to="/"><div class="web"><span>官网</span></div></router-link>
-                <router-link to="/"><div class="book"><span>白皮书</span></div></router-link>
+        <div class="urlwrap">
+                <a :href="detailDatas.twitterLink"><div class="middlepic"></div></a>
+                <a :href="detailDatas.telegramLink"><div class="telegram"></div></a>
+                <a :href="detailDatas.githubLink"><div class="github"></div></a>
+                <a :href="detailDatas.webSiteUrl"><div class="web"><span>官网</span></div></a>
+                <a :href="detailDatas.whitePaperLink"><div class="book"><span>白皮书</span></div></a>
             </div>
         </div>
         
@@ -28,37 +28,24 @@
             <div class="simpledesc">{{detailDatas.description}}</div>
             <div class="shorttitle">代币信息</div>
             <div class="coinmessage">
-                <div style="float:left;width:50%;">
-                    <div>名称：</div>
-                    <div>众筹价格：</div>
-                    <div>发行总量</div>
-                    <div>软顶：</div>
-                    <div>众筹币种：</div>
+                <div style="float:left;width:50%;" v-for="(info,ind) in detailDatas.basicInfo" :key="ind">
+                   {{info.key}}：{{info.value}}
                 </div>
-                <div style="float:right;width:50%;">
-                    <div>简称：</div>
-                    <div>平台：</div>
-                    <div>ICO总量：</div>
-                    <div>硬顶：</div>
-                </div>
+                <div style="clear:both;"></div>
             </div>
         </div>
 
         <div style="background-color:white;margin-top:15px;">
             <div class="describle">项目评级</div>
-            <div class="shorttitle">评级机构名称A</div>
-            <div style="border-bottom: 1px solid #efefef;padding:0 15px 15px;line-height:22px;">
-                <div>市场热度：</div>
-                <div>风险程度：</div>
-            </div>
-            <div class="shorttitle">评级机构名称B</div>
-            <div style="padding:0 15px 15px;box-sizing:border-box;font-size:14px;line-height:26px;">
-                <div>项目特点：</div>
-                <div></div>
+            <div v-for="(pro,i) in detailDatas.projectRatings" :key="i">
+              <div class="shorttitle">{{pro.orgName}}</div>
+              <div class="simpledesc">
+                  <div>{{pro.orgRatingInfo}}</div>
+              </div>
             </div>
         </div>
 
-        <mt-button size="large" type="primary" style="width:96vw;margin:15px auto;">参与众筹</mt-button>
+        <mt-button size="large" type="primary" style="width:96vw;margin:15px auto;" @click="activepro">参与众筹</mt-button>
     </div>
 </template>
 
@@ -71,23 +58,36 @@ export default {
       isShowPanel: false
     };
   },
-  mounted () {
+  mounted() {
     this.getDetail();
   },
   methods: {
-    goreturn () {
-      this.$router.go(-1)
+    goreturn() {
+      this.$router.go(-1);
     },
-    getDetail () {
-      var id = window.location.href.split('=')[1]
-      var _this = this
-      axios.get('http://47.74.158.5:8889/project/info?projectId=' + id).then(res => {
-        if (res.data.success) {
-          _this.detailDatas = res.data.data
-        } else {
-          _this.$message(res.data.error)
-        }
-      }).catch(error => _this.$message(error))
+    getDetail() {
+      var id = window.location.href.split("=")[1];
+      var _this = this;
+      axios
+        .get("http://47.74.158.5:8889/project/info?projectId=" + id)
+        .then(res => {
+          if (res.data.success) {
+            _this.detailDatas = res.data.data;
+          } else {
+            _this.$message(res.data.error);
+          }
+        })
+        .catch(error => _this.$message(error));
+    },
+    activepro () {
+      if(this.detailDatas.isFinish){
+        this.$message.info("项目已经截至")
+      }else if(this.detailDatas.isAuth){
+        this.$message.info("请先绑定钱包")
+      }else {
+        this.$store.commit('updateDetails', this.detailDatas)
+      this.$router.push({name:'mobiledactive'})
+      }
     }
   }
 };
@@ -156,11 +156,17 @@ export default {
   margin: 15px;
   font-weight: bold;
 }
-.simpledesc{
-border-bottom: 1px solid #efefef;padding:0 15px 15px;line-height:22px;
+.simpledesc {
+  border-bottom: 1px solid #efefef;
+  padding: 0 15px 15px;
+  line-height: 22px;
 }
-.coinmessage{
-  height:158px;padding:0 15px 15px;box-sizing:border-box;font-size:14px;line-height:26px;
+.coinmessage {
+  padding: 0 15px 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 26px;
+  clear: both;
 }
 </style>
 

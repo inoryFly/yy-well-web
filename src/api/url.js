@@ -15,6 +15,9 @@ export default {
   'login_mobile': remoteServer + '/auth/mobile',
   'send_sms': remoteServer + '/auth/sendSms',
   'mail_reg': remoteServer + '/auth/register',
+  'mobile_reg':remoteServer + '/auth/register/sendSms',
+  'mobile_pwd':remoteServer + '/auth/register/mobile',
   'mail_result': remoteServer + '/auth/email/',
-  'banner': remoteServer + '/project/banner'
+  'banner': remoteServer + '/project/banner',
+  'userInfoList': remoteServer + '/user/info/list'
 }

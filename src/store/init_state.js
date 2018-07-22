@@ -1,5 +1,6 @@
 const state = {
   isLogin: false,
-  token: ''
+  token: '',
+  details: '测试'
 }
 export default state
