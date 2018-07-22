@@ -30,7 +30,7 @@
                 <img src="../../../images/arrow.png" class="arrow" alt="">
               </mt-field>
               
-              <div id="__nc" style="margin:20px auto 0;width:80%;height:60px;">
+              <div id="__nc" style="margin:20px auto 0;width:100%;height:60px;">
                 <div id="nc"></div>
               </div>
               <div class="topath" style="margin-top:0">
@@ -51,7 +51,7 @@
 
           <div style="padding:40px 16px"><span class="bluecolor">{{minute}}</span>后重新获取验证码</div>
         </div>
-        
+        <router-link to="/mobilefind"><div class="fgpwd">忘记密码</div></router-link>
     </div>
 </template>
 
@@ -313,6 +313,13 @@ export default {
 }
 .arrow {
   height: 10px;
+}
+.fgpwd{
+  text-align: center;
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    color:#666666;
 }
 </style>
 

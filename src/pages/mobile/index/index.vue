@@ -9,7 +9,7 @@
        </div>
     
          <ul class="resultwrap">
-           <router-link v-for="(item,index) in searchvalue"  :key="index" :to="{path:'/mobiledetail',query: {projectId: item.projectId}}"><li class="lilist">{{item.name}}</li></router-link></span>
+           <router-link v-for="(item,index) in searchvalue"  :key="index" :to="{path:'/mobiledetail',query: {projectId: item.projectId}}"><li class="lilist">{{item.name}}</li></router-link>
          </ul>
      </div>
      <div v-else>
@@ -162,6 +162,7 @@
 
 <script>
 import axios from "../../../api/axios.conf.js";
+import url from "../../../api/url.js";
 import { porjectsearch } from "../../../api/";
 export default {
   name: "page-tabbar",
@@ -169,7 +170,6 @@ export default {
     return {
       selected: "项目列表",
       active: "BEING",
-      dissUrl: "http://47.74.158.5:8889",
       currentPage: 1,
       totalPage: 1,
       contentList: [],
@@ -212,7 +212,7 @@ export default {
       var _this = this;
       if (_this.searchName != undefined && _this.searchName != "") {
         var urls =
-          "http://47.74.158.5:8889/project/search?searchName=" +
+          url.remoteServer+"/project/search?searchName=" +
           this.searchName;
         this.timer = setTimeout(() => {
           axios(urls)
@@ -248,14 +248,14 @@ export default {
       if (!bool) {
         this.contentList = [];
       }
-      var url =
-        this.dissUrl +
+      var urls =
+        url.remoteServer +
         "/project/list?status=" +
         id +
         "&size=8&page=" +
         this.currentPage;
       this.loading = true;
-      axios(url)
+      axios(urls)
         .then(res => {
           if (res.data.success) {
             _this.totalPage = res.data.data.totalPages;

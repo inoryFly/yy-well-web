@@ -4,6 +4,7 @@ if (process.env === 'production') {
   remoteServer = 'www.wellico.io/api'
 }
 export default {
+  'remoteServer': remoteServer,
   'getUInfoDetail': remoteServer + '/user/info/detail',
   'bindPhone': remoteServer + '/user/info/phone/bind/valid',
   'bindPhoneCode': remoteServer + '/user/info/phone/bind ',
@@ -20,5 +21,6 @@ export default {
   'mail_result': remoteServer + '/auth/email/',
   'banner': remoteServer + '/project/banner',
   'userInfoList': remoteServer + '/user/info/list',
-  'porjectsearch':remoteServer + '/project/search'
+  'porjectsearch':remoteServer + '/project/search',
+  'findpwd':remoteServer +'/auth/findPwd'
 }

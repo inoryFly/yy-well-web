@@ -38,13 +38,13 @@ export function sendSms (params) {
   return axios.post(url.send_sms, params)
 }
 export function mailReg (params) {
-  return axios.post(url.mail_reg)
+  return axios.post(url.mail_reg,params)
 }
 export function mobileReg (params) {
-  return axios.post (url.mobile_reg)
+  return axios.post (url.mobile_reg,params)
 }
 export function mobilePwd (params) {
-  return axios.post (url.mobile_pwd)
+  return axios.post (url.mobile_pwd,params)
 }
 export function mailResult (key) {
   return axios.get(`${url.mail_result}${key}`)
@@ -54,4 +54,7 @@ export function banner () {
 }
 export function porjectsearch(params){
   return axios.post (url.porjectsearch,params)
+}
+export function findpwd(params){
+  return axios.post(url.findpwd,params)
 }

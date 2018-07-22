@@ -61,7 +61,7 @@ export default {
   data() {
     return {
       phone: true,
-      regitster: true,
+      regitster: false,
       emailverify: undefined,
       email: undefined,
       pwd: undefined,
@@ -160,7 +160,7 @@ export default {
           window.console && console.log(data.sig);
           if (_this.phone) {
             _this.params = {
-              email: _this.myphone,
+              email: _this.email,
               password: _this.pwd,
               repPassword: _this.repwd,
               token: {
@@ -173,7 +173,7 @@ export default {
             _this.hk = true;
           } else {
             _this.params = {
-              mobile: _this.email,
+              mobile: _this.myphone,
               token: {
                 sig: data.sig,
                 token: ncToken,
@@ -224,7 +224,7 @@ export default {
     },
     myphone() {
       var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/;
-      if (!this.myphone || !phoneReg.test(myphone)) {
+      if (!this.myphone || !phoneReg.test(this.myphone)) {
         this.phoneverify = "error";
       } else {
         this.phoneverify = "success";
@@ -253,7 +253,7 @@ export default {
             } else {
               _this.$message.error("注册失败");
             }
-          });
+          }).catch(err => _this.$message.error(err));
         }
       } else {
         this.$message.error("请完成验证");

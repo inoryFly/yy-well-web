@@ -19,7 +19,8 @@
       background-color: #2179FE !important
   }
   ._nc .stage1 .icon{
-      left: 21px !important;
+      left: 20px !important;
+      margin: 6px auto;
   }
   ._nc .stage1 .bg-green {
     background-color: #2179FE !important;

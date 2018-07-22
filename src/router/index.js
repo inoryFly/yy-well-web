@@ -15,6 +15,7 @@ import MobileIndex from '@pages/mobile/index/index'
 import MobileRecord from '@pages/mobile/record/record'
 import MobileDetail from '@pages/mobile/detail/detail'
 import MobileActive from '@pages/mobile/detail/active'
+import FindPwd from '@pages/mobile/findpwd/find'
 
 Vue.use(Router)
 
@@ -123,6 +124,13 @@ const router = new Router({
       path: '/mobileactive',
       name: 'mobiledactive',
       component: MobileActive,
+      meta: {
+        client: 'mobile'
+      }
+    },{
+      path: '/mobilefind',
+      name: 'mobilefind',
+      component: FindPwd,
       meta: {
         client: 'mobile'
       }
