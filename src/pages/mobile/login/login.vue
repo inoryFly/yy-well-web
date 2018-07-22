@@ -41,15 +41,15 @@
         </div>
         <div v-else>
           <div class="inputverify">
-            <div class="verifymessage"><mt-field disableClear v-model="first"></mt-field></div>
-            <div class="verifymessage"><mt-field disableClear v-model="second"></mt-field></div>
-            <div class="verifymessage"><mt-field disableClear v-model="third"></mt-field></div>
-            <div class="verifymessage"><mt-field disableClear v-model="fourth"></mt-field></div>
+            <div class="verifymessage"><input type="text" v-model="first"></div>
+            <div class="verifymessage"><input type="text" v-model="second"></div>
+            <div class="verifymessage"><input type="text" v-model="third"></div>
+            <div class="verifymessage"><input type="text" v-model="fourth"></div>
           </div>
-          <div class="bluecolor" style="padding:0 30px 26px 16px">重新获取验证码</div>
-          <mt-button size="large" type="primary" @click="nextStep">登录</mt-button>
+          <div class="bluecolor" style="padding:0 30px 26px 16px" @click="sendMes(params)">重新获取验证码</div>
+          <mt-button size="large" type="primary" @click="mobilesubmit">登录</mt-button>
 
-          <div style="padding:40px 16px"><span class="bluecolor">{{minute}}</span>后重新获取验证码</div>
+          <div style="padding:40px 16px"><span class="bluecolor">{{minute}}s</span>后重新获取验证码</div>
         </div>
         <router-link to="/mobilefind"><div class="fgpwd">忘记密码</div></router-link>
     </div>
@@ -64,7 +64,7 @@ export default {
       phone: true,
       account: undefined,
       pwd: undefined,
-      mobile: undefined,
+      mobile: '17661138549',
       captcha: undefined,
       message: false,
       minute: 60,
@@ -74,7 +74,8 @@ export default {
       first:undefined,
       second:undefined,
       third:undefined,
-      fourth:undefined
+      fourth:undefined,
+      params:{}
     };
   },
   updated() {
@@ -88,7 +89,7 @@ export default {
       var nc = NoCaptcha.init({
         renderTo: "#nc",
         appkey: "FFFF0N00000000006266",
-        scene: "nc_message",
+        scene: "nc_message_h5",
         token: ncToken,
         trans: { key1: "code0" },
         is_Opt: 0,
@@ -107,7 +108,7 @@ export default {
           window.console && console.log(ncToken);
           window.console && console.log(data.csessionid);
           window.console && console.log(data.sig);
-          var params = {
+          _this.params = {
             mobile: _this.mobile,
             token: {
               sig: data.sig,
@@ -116,17 +117,7 @@ export default {
               scene: "well_h5"
             }
           };
-          sendSms(params)
-            .then(res => {
-              if (res.data.success) {
-                _this.$message.success("发送成功");
-                _this.messageSuccess=true;
-              } else {
-                // nc.reload()
-                _this.$message.error(res.data.error);
-              }
-            })
-            .catch(error => _this.$message.error(error));
+          _this.sendMes(_this.params)
         },
         error: function(s) {}
       });
@@ -153,17 +144,24 @@ export default {
         this.inputing=true
       } 
     },
-    minute () {
-      if(this.minute === 0){
-        this.minute = 60
-        clearInterval(this.time);
-        this.time = setInterval(() => {
-          if (this.minute > 0) {
-            this.minute = this.minute - 1;
-          } else {
-            clearInterval(this.time);
-          }
-        }, 1000);
+    first () {
+      if(this.first.length>1){
+        this.first=this.first[1]
+      }
+    },
+    second () {
+      if(this.second.length>1){
+        this.second=this.second[1]
+      }
+    },
+    third () {
+      if(this.third.length>1){
+        this.third=this.third[1]
+      }
+    },
+    fourth () {
+       if(this.fourth.length>1){
+        this.fourth=this.fourth[1]
       }
     }
   },
@@ -244,7 +242,21 @@ export default {
           }
         })
         .catch(err => console.log(err));
-    }
+    },
+    sendMes (params){
+      var _this=this
+       sendSms(params)
+            .then(res => {
+              if (res.data.success) {
+                _this.$message.success("发送成功");
+                _this.messageSuccess=true;
+              } else {
+                // nc.reload()
+                _this.$message.error(res.data.error);
+              }
+            })
+            .catch(error => _this.$message.error(error));
+    },
   }
 };
 </script>
@@ -279,6 +291,13 @@ export default {
   width: 40px;
   margin-right: 10px;
   border-bottom: 1px solid #D9D9D9;
+  input {
+        width: 100%;
+    outline: none;
+    border: none;
+    height: 48px;
+    text-align: center;
+  }
 }
 .inputverify{
   width: 100vw;

@@ -83,6 +83,7 @@
 
 <script>
 import axios from '../../../api/axios.conf.js'
+import urls from '../../../api/url.js'
 export default {
   name: "page-tabbar",
   data() {
@@ -112,7 +113,7 @@ export default {
         if(!bool){
           this.tableData=[]
         }
-        var url = 'http://47.74.158.5:8889/project/invest/list?size=8&page=' + this.currentPage+"&&status="+this.selected
+        var url = urls.remoteServer+'/project/invest/list?size=8&page=' + this.currentPage+"&&status="+this.selected
         axios.get(url).then(res => {
           if (res.data.success) {
             if(!bool){

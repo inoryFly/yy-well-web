@@ -89,7 +89,7 @@ export default {
         var nc = NoCaptcha.init({
           renderTo: "#nc",
           appkey: "FFFF0N00000000006266",
-          scene: "nc_message",
+          scene: "nc_message_h5",
           token: ncToken,
           trans: { key1: "code0" },
           is_Opt: 0,
@@ -111,7 +111,7 @@ export default {
             _this.params = {
               email: _this.email,
               password:_this.pwd,
-              repPassword:_this.repwd,
+              rePassword:_this.repwd,
               token: {
                 sig: data.sig,
                 token: ncToken,
@@ -139,7 +139,7 @@ export default {
       var nc = NoCaptcha.init({
         renderTo: "#nc",
         appkey: "FFFF0N00000000006266",
-        scene: "nc_message",
+        scene: "nc_message_h5",
         token: ncToken,
         trans: { key1: "code0" },
         is_Opt: 0,
@@ -162,7 +162,7 @@ export default {
             _this.params = {
               email: _this.email,
               password: _this.pwd,
-              repPassword: _this.repwd,
+              rePassword: _this.repwd,
               token: {
                 sig: data.sig,
                 token: ncToken,
@@ -245,8 +245,10 @@ export default {
         ) {
           var _this = this;
           mailReg(_this.params).then(res => {
-            if (res.data.sucess) {
-              _this.$message.sucess("注册成功,请登录");
+            console.log("zhe")
+            if (res.data.success) {
+              console.log("进来了")
+              _this.$message.success("注册成功,请登录");
               setTimeout(() => {
                 _this.$router.push({ name: "mobilelogin" });
               }, 2000);

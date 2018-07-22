@@ -18,10 +18,15 @@
                 <span style="color:#2179FE" v-if="info.value === ''">去绑定</span>
                 <span style="color:#666666" v-else>{{info.value}}</span>
             </mt-cell>
-            <mt-cell title="绑定以太坊钱包" is-link @click.native="gobind('pocket')">
+            <mt-cell title="绑定以太坊钱包" is-link style="margin-bottom:15px" @click.native="gobind('pocket')">
                 <span style="color:#2179FE" v-if="pocket.value === ''">去绑定</span>
                 <span style="color:#666666" v-else>{{pocket.value}}</span>
             </mt-cell>
+
+            <a v-for="(item,index) in other" :key="index" :href="item.value">
+              <mt-cell v-bind:title="item.key">
+              </mt-cell>
+            </a>
         </div>
 
     <mt-tabbar v-model="selected" fixed>
@@ -51,7 +56,8 @@ export default {
       mobile: {status:"",value:""},
       email: {status:"",value:""},
       pocket: {status:"",value:""},
-      info: {status:"",value:""}
+      info: {status:"",value:""},
+      other:[]
     };
   },
   mounted () {
@@ -61,6 +67,8 @@ export default {
           this.email=res.data.data.email
           this.pocket=res.data.data.eth
           this.info =res.data.data.info
+          this.other = res.data.data.others
+          console.log(res.data.data)
         }
       })
   },

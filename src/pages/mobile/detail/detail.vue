@@ -51,6 +51,7 @@
 
 <script>
 import axios from "axios";
+import url from '../../../api/url.js'
 export default {
   data() {
     return {
@@ -69,7 +70,7 @@ export default {
       var id = window.location.href.split("=")[1];
       var _this = this;
       axios
-        .get("http://47.74.158.5:8889/project/info?projectId=" + id)
+        .get(url.remoteServer+"/project/info?projectId=" + id)
         .then(res => {
           if (res.data.success) {
             _this.detailDatas = res.data.data;

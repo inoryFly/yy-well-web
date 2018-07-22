@@ -34,7 +34,7 @@ export default {
       var nc = NoCaptcha.init({
         renderTo: "#nc",
         appkey: "FFFF0N00000000006266",
-        scene: "nc_message",
+        scene: "nc_message_h5",
         token: ncToken,
         trans: { key1: "code0" },
         is_Opt: 0,

@@ -69,7 +69,8 @@ import {
   userInfoEth,
   userInfo,
   bindPhoneCode,
-  getUserInfoEth
+  getUserInfoEth,
+  getUserInfo
 } from "../../../api/";
 export default {
   data() {
@@ -113,7 +114,7 @@ export default {
         }).catch(err => _this.$message.error(err))
     } else if (this.$route.params.type === "info") {
       this.title = "实名认证";
-      userInfo()
+      getUserInfo()
         .then(res => {
           if (res.data.success) {
             _this.realname = res.data.data.realName;
@@ -140,7 +141,7 @@ export default {
       var nc = NoCaptcha.init({
         renderTo: "#nc",
         appkey: "FFFF0N00000000006266",
-        scene: "nc_message",
+        scene: "nc_message_h5",
         token: ncToken,
         trans: { key1: "code0" },
         is_Opt: 0,
@@ -222,7 +223,7 @@ export default {
     },
     idcard() {
       var idReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-      if (!this.idcard || !phoneReg.test(this.idcard)) {
+      if (!this.idcard || !idReg.test(this.idcard)) {
         this.idcardverify = "error";
       } else {
         this.idcardverify = "success";
