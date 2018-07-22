@@ -1,9 +1,16 @@
 <template>
    <div class="page-tabbar">
      <div v-if="search">
-       <!-- <mt-header> -->
-         <mt-search autofocus v-model="searchName" cancel-text="取消" :result="searchvalue"></mt-search>
-       <!-- </mt-header> -->
+       <div class="searchheader">
+         <div style="float:left;width:82%">
+           <input type="search" v-model="searchName" placeholder="搜索" class="mysearch"/>
+         </div>
+         <div style="float:left" class="searchcancel" @click="search=!search">取消</div>
+       </div>
+    
+         <ul class="resultwrap">
+           <router-link v-for="(item,index) in searchvalue"  :key="index" :to="{path:'/mobiledetail',query: {projectId: item.projectId}}"><li class="lilist">{{item.name}}</li></router-link></span>
+         </ul>
      </div>
      <div v-else>
 
@@ -29,11 +36,11 @@
                   <div class="maincontent">
                     <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
                     <span class="fr">
-                      <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=5}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=4}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=3}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=2}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=1}"></span>
                       <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
                     </span>
                   </div>
@@ -64,11 +71,11 @@
                   <div class="maincontent">
                     <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
                     <span class="fr">
-                      <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=5}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=4}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=3}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=2}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=1}"></span>
                       <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
                     </span>
                   </div>
@@ -100,11 +107,11 @@
                   <div class="maincontent">
                     <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
                     <span class="fr">
-                      <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
-                      <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                     <span  v-bind:class="{newstar:parseInt(item.rating)>=5}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=4}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=3}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=2}"></span>
+                      <span  v-bind:class="{newstar:parseInt(item.rating)>=1}"></span>
                       <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
                     </span>
                   </div>
@@ -155,7 +162,7 @@
 
 <script>
 import axios from "../../../api/axios.conf.js";
-import {porjectsearch} from "../../../api/"
+import { porjectsearch } from "../../../api/";
 export default {
   name: "page-tabbar",
   data() {
@@ -167,10 +174,11 @@ export default {
       totalPage: 1,
       contentList: [],
       loading: false,
-      search:false,
-      searchName:undefined,
-      searchvalue:[],
-      timer:null
+      search: false,
+      searchName: undefined,
+      searchvalue: [],
+      timer: null,
+      bool: false
     };
   },
   computed: {
@@ -193,31 +201,33 @@ export default {
   mounted() {
     this.toList("BEING", false);
   },
-  watch:{
-    active () {
-      this.toList(this.active,false)
+  watch: {
+    active() {
+      this.toList(this.active, false);
     },
-    searchName () {
-      if(this.timer){
-        clearTimeout(this.timer)
+    searchName() {
+      if (this.timer) {
+        clearTimeout(this.timer);
       }
-    var _this=this;
-    if(_this.searchName!=undefined&&_this.searchName !=""){
-      this.timer = setTimeout ( () =>{
-            porjectsearch({
-              searchName:_this.searchName
-            }).then(res => {
-              if(res.data.success){
-                  _this.searchvalue=res.data.data.content
-              }else{
-                _this.$message.error(res.data.error)
+      var _this = this;
+      if (_this.searchName != undefined && _this.searchName != "") {
+        var urls =
+          "http://47.74.158.5:8889/project/search?searchName=" +
+          this.searchName;
+        this.timer = setTimeout(() => {
+          axios(urls)
+            .then(res => {
+              if (res.data.success) {
+                _this.searchvalue = res.data.data;
+              } else {
+                _this.$message.error(res.data.error);
               }
-            }).catch(err => {
-              _this.$message.error(err)
             })
-            
-          },800)
-    }
+            .catch(err => {
+              _this.$message.error(err);
+            });
+        }, 800);
+      }
     }
   },
   methods: {
@@ -263,11 +273,10 @@ export default {
     },
     loadMore() {
       if (this.currentPage < this.totalPage) {
-        this.currentPage=this.currentPage+1;
+        this.currentPage = this.currentPage + 1;
         this.toList(this.active, true);
       }
-    },
-    
+    }
   }
 };
 </script>
@@ -336,10 +345,13 @@ export default {
     }
   }
   .newstar {
-    background: url("../../../images/star-on.png");
+    background: url("../../../images/star-on.png") no-repeat center center;
+    background-size: 16px 16px;
   }
+
   .starhalf {
     background: url("../../../images/star-half.png");
+    background-size: 16px 16px;
   }
   .simple {
     overflow: hidden;
@@ -384,6 +396,38 @@ export default {
   font-size: 12px;
   color: #2179fe;
 }
+.searchheader {
+  height: 40px;
+  background-color: #26a2ff;
+  padding: 5px 0 5PX 20px;
+}
+.mysearch {
+  height: 30px;
+  width: 100%;
+  border: none;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  padding-left: 30px;
+  background: white url("../../../images/search.png") no-repeat 8px center;
+  background-size: 14px 14px;
+  outline: none;
+}
+.searchcancel {
+  color: white;
+  line-height: 30px;
+  font-size: 16px;
+  width: 18%;
+  text-align: center;
+}
+.resultwrap{
+  height: calc(100vh - 40px);
+  overflow-y: scroll;
+}
+.lilist{
+  height: 50px;
+  line-height: 50px;
+  padding-left: 20px;
+}
 </style>
 
 <style lang="scss">
@@ -401,10 +445,10 @@ export default {
     margin-right: 5px !important;
   }
 }
-.mint-searchbar{
-  background-color:#26a2ff !important;
+.mint-searchbar {
+  background-color: #26a2ff !important;
 }
-.mint-searchbar-cancel{
-color:white !important;
+.mint-searchbar-cancel {
+  color: white !important;
 }
 </style>

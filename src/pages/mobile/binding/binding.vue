@@ -15,12 +15,12 @@
              
             <mt-field placeholder="请输入短信验证码" v-model="code">
               <!-- <mt-button size="large" type="primary">发送验证码</mt-button> -->
-              <div class="mybutton sendverify">发送验证码</div>
+              <div class="mybutton sendverify" @click="sendMes">发送验证码</div>
             </mt-field>
             
             <mt-button size="large" type="primary" style="margin-top:38px;" @click="bindPhones">立即绑定</mt-button>
             <div class="mybutton clicktime">{{minute}}s</div>
-            <div class="mybutton sendagain">再次发送</div>
+            <div class="mybutton sendagain" @click="sendMes">再次发送</div>
         </div>
         <div v-else-if="current=='email'" class="topmargin">
           <mt-field placeholder="请输入绑定邮箱" v-model="bindemail" v-bind:state="verifyemail"></mt-field>
@@ -31,9 +31,9 @@
          <mt-button size="large" type="primary" @click="bindemails">立即绑定</mt-button>
         </div>
         <div v-else-if="current=='pocket'" class="topmargin">
-          <mt-field placeholder="请输入以太坊钱包地址" v-model="usermessage"></mt-field>
+          <mt-field placeholder="请输入以太坊钱包地址" v-model="eth"></mt-field>
           <div class="mention">绑定后无法更改，请谨慎填写</div>
-         <mt-button size="large" type="primary">立即绑定</mt-button>
+         <mt-button size="large" type="primary" @click="bindnow">立即绑定</mt-button>
         </div>
 
         <div v-else-if="current=='info'" class="topmargin">
@@ -44,7 +44,7 @@
          <mt-button size="large" type="primary" style="margin-top:30px" @click="realnamesub">立即认证</mt-button>
         </div>
 
-        <div class="mymodal" v-if="current=='pocket'">
+        <div class="mymodal" id="pocket" v-if="current=='pocket'">
               <div class="contentwrap">
                   <span>绑定成功</span>
               </div>
@@ -63,31 +63,39 @@
 </template>
 
 <script>
-import {userInfoList, bindPhone,bindEmail,userInfo,bindPhoneCode} from '../../../api/'
+import {
+  bindPhone,
+  bindEmail,
+  userInfoEth,
+  userInfo,
+  bindPhoneCode,
+  getUserInfoEth
+} from "../../../api/";
 export default {
   data() {
     return {
       current: undefined,
       usermessage: undefined,
       title: "绑定手机号",
-      minute:60,
-      time:undefined,
-      bindphone:undefined,
-      verifyphone:undefined,
-      code:undefined,
-      bindemail:undefined,
-      verifyemail:undefined,
-      realname:undefined,
-      realphone:undefined,
-      idcard:undefined,
-      realphoneverify:undefined,
-      idcardverify:undefined,
-      msg:undefined,
-      isSuccess:true
+      minute: 60,
+      time: undefined,
+      bindphone: undefined,
+      verifyphone: undefined,
+      code: undefined,
+      bindemail: undefined,
+      verifyemail: undefined,
+      realname: undefined,
+      realphone: undefined,
+      idcard: undefined,
+      realphoneverify: undefined,
+      idcardverify: undefined,
+      msg: undefined,
+      isSuccess: true,
+      params: {}
     };
   },
   mounted() {
-    var _this=this;
+    var _this = this;
     this.current = this.$route.params.type;
     if (this.$route.params.type === "mobile") {
       this.title = "绑定手机号";
@@ -95,27 +103,35 @@ export default {
       this.title = "绑定邮箱";
     } else if (this.$route.params.type === "pocket") {
       this.title = "绑定钱包地址";
-    }else if (this.$route.params.type === "info") {
+      getUserInfoEth().then(res => {
+          if(res.data.success){
+            var eles = document.querySelector("#pocket");
+            eles.style.display = "display";
+          }else{
+            _this.$message.error(res.data.error)
+          }
+        }).catch(err => _this.$message.error(err))
+    } else if (this.$route.params.type === "info") {
       this.title = "实名认证";
-      userInfo().then(res=>{
-        if(res.data.success){
-          _this.realname=res.data.data.realName
-          _this.realphone=res.data.data.phone
-          _this.idcard = res.data.data.idCard,
-          _this.msg =res.data.data.msg
-        }else{
-          _this.$message.error(res.data.error)
-        }
-      }).catch(err =>_this.$message.error(err) )
+      userInfo()
+        .then(res => {
+          if (res.data.success) {
+            _this.realname = res.data.data.realName;
+            _this.realphone = res.data.data.phone;
+            (_this.idcard = res.data.data.idCard),
+              (_this.msg = res.data.data.msg);
+          } else {
+            _this.$message.error(res.data.error);
+          }
+        })
+        .catch(err => _this.$message.error(err));
     }
 
-       //请务必确保这里调用一次reset()方法
-    
-
+    //请务必确保这里调用一次reset()方法
   },
-  updated () {
-    var _this=this;
-    if(this.current == 'mobile' || this.current =='email'){
+  updated() {
+    var _this = this;
+    if (this.current == "mobile" || this.current == "email") {
       var ncToken = [
         "FFFF0N00000000006266",
         new Date().getTime(),
@@ -143,80 +159,73 @@ export default {
           window.console && console.log(ncToken);
           window.console && console.log(data.csessionid);
           window.console && console.log(data.sig);
-         if(_this.current == 'email'){
-           bindEmail({
-            email:_this.bindemail,
-            token:{
+          if (_this.current == "email") {
+            bindEmail({
+              email: _this.bindemail,
+              token: {
                 sig: data.sig,
                 token: ncToken,
                 csessionid: data.csessionid,
                 scene: "well_h5"
-            }
-            }).then(res => {
-              if(res.data.success){
-                _this.isSuccess=true
-              }else{
-                _this.isSuccess=false
-                _this.$message.error(res.data.error)
               }
-            })
-         }else{
-           bindPhoneCode({
-            mobile:_this.bindphone,
-            token:{
+            }).then(res => {
+              if (res.data.success) {
+                _this.isSuccess = true;
+              } else {
+                _this.isSuccess = false;
+                _this.$message.error(res.data.error);
+              }
+            });
+          } else {
+            _this.params = {
+              mobile: _this.bindphone,
+              token: {
                 sig: data.sig,
                 token: ncToken,
                 csessionid: data.csessionid,
                 scene: "well_h5"
-            }
-            }).then(res => {
-              if(res.data.success){
-                _this.isSuccess=true
-              }else{
-                _this.isSuccess=false
-                _this.$message.error(res.data.error)
               }
-            })
-         }
+            };
+            _this.isSuccess = true;
+          }
         },
         error: function(s) {}
       });
       NoCaptcha.setEnabled(true);
       nc.reset();
     }
-
   },
   watch: {
-    bindphone(){
-      var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/
-      if(!this.bindphone || !phoneReg.test(this.bindphone)){
-        this.verifyphone = 'error'
-      }else{
-        this.verifyphone = 'success'
+    bindphone() {
+      var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/;
+      if (!this.bindphone || !phoneReg.test(this.bindphone)) {
+        this.verifyphone = "error";
+      } else {
+        this.verifyphone = "success";
       }
     },
-    bindemail () {
-      var emailReg = /^[0-9A-Za-z][\.-_0-9A-Za-z]*@[0-9A-Za-z]+(\.[0-9A-Za-z]+)+$/
-      if(!this.bindemail || !emailReg.test(this.bindemail)){
-        this.verifyemail = 'error'
-      }else{
-        this.verifyemail = 'success'
+    bindemail() {
+      var emailReg = /^[0-9A-Za-z][\.-_0-9A-Za-z]*@[0-9A-Za-z]+(\.[0-9A-Za-z]+)+$/;
+      if (!this.bindemail || !emailReg.test(this.bindemail)) {
+        this.verifyemail = "error";
+      } else {
+        this.verifyemail = "success";
       }
     },
-    realphone () {
-      var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/
-      if(!this.realphone || !phoneReg.test(this.realphone)){
-        this.realphoneverify = 'error'
-      }else{
-        this.realphoneverify = 'success'
+    realphone() {
+      var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/;
+      if (!this.realphone || !phoneReg.test(this.realphone)) {
+        this.realphoneverify = "error";
+      } else {
+        this.realphoneverify = "success";
       }
     },
-    idcard () {
-      var idReg =/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-      if(!this.idcard || !phoneReg.test(this.idcard)){
-        this.idcardverify = 'error'
-      }else{
-        this.idcardverify = 'success'
+    idcard() {
+      var idReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+      if (!this.idcard || !phoneReg.test(this.idcard)) {
+        this.idcardverify = "error";
+      } else {
+        this.idcardverify = "success";
       }
     }
   },
@@ -224,59 +233,104 @@ export default {
     goreturn() {
       this.$router.go(-1);
     },
-    nextstep () {
-      if(this.isSuccess){
-        this.isSuccess=false
-          this.current = "mobilenext"
-          this.time =setInterval(() => {
-            if (this.minute > 0) {
-              this.minute = this.minute - 1;
-            } else {
-              clearInterval(this.time);
-            }
-          }, 1000)
-      }else{
-        this.$message.error("验证失败，请重新验证")
+    nextstep() {
+      if (this.isSuccess) {
+        this.isSuccess = false;
+        this.current = "mobilenext";
+      } else {
+        this.$message.error("验证失败，请重新验证");
       }
-      
     },
-    bindPhones () {
+    bindPhones() {
       bindPhone({
-        mobile:this.bindphone,
-        captcha:this.code
-      }).then(res => {
-        if(res.data.success){
-          this.$message.success ('绑定手机成功');
-          this.$router.go(-1)
-        }else{
-          this.$message.error(data.error)
-        }
-      }).catch(err =>{
-        console.error(err)
+        mobile: this.bindphone,
+        captcha: this.code
       })
+        .then(res => {
+          if (res.data.success) {
+            this.$message.success("绑定手机成功");
+            this.$router.go(-1);
+          } else {
+            this.$message.error(data.error);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
-    bindemails () {
-      var eles=document.querySelector('#emails');
-      eles.style.display="block"
+    bindemails() {
+      if( this.verifyemail=='success'){
+        if(this.isSuccess){
+          var eles = document.querySelector("#emails");
+        eles.style.display = "block";
+        }else{
+          this.$message.error("绑定失败，请重新绑定")
+        }
+      }else{
+        this.$message.error("验证不通过")
+      }
     },
-    modaldisplay (ids) {
-      var eles=document.querySelector('#'+ids);
-      eles.style.display="none"
+    modaldisplay(ids) {
+      var eles = document.querySelector("#" + ids);
+      eles.style.display = "none";
     },
-    realnamesub () {
-      if(this.realphoneverify == 'success' && this.idcardverify && this.realname){
-        var _this=this;
+    realnamesub() {
+      if (
+        this.realphoneverify == "success" &&
+        this.idcardverify &&
+        this.realname
+      ) {
+        var _this = this;
         userInfo({
-          idCard:_this.idcard,
-          realName:_this.realname,
-          phone:_this.realphone
+          idCard: _this.idcard,
+          realName: _this.realname,
+          phone: _this.realphone
+        })
+          .then(res => {
+            if (res.data.success) {
+              _this.$message.success("提交成功，等待审核");
+            } else {
+              _this.$message.error(res.data.error);
+            }
+          })
+          .catch(err => _this.$message.error(err));
+      }
+    },
+    sendMessage(params) {
+      bindPhoneCode(params).then(res => {
+        if (res.data.success) {
+          this.isSuccess = true;
+        } else {
+          this.isSuccess = false;
+          this.$message.error(res.data.error);
+        }
+      });
+    },
+    sendMes() {
+      if (this.code) {
+        this.time = setInterval(() => {
+          if (this.minute > 0) {
+            this.minute = this.minute - 1;
+          } else {
+            clearInterval(this.time);
+          }
+        }, 1000);
+        this.sendMessage(this.params);
+      }
+    },
+    bindnow(){
+      if(this.eth !=undefined && this.eth!=""){
+        var _this=this;
+        userInfoEth({
+          ethAddress:this.eth
         }).then(res => {
           if(res.data.success){
-            _this.$message.success("提交成功，等待审核")
+            var eles = document.querySelector("#pocket");
+            eles.style.display = "display";
           }else{
             _this.$message.error(res.data.error)
           }
-        }).catch(err =>_this.$message.error(err) )
+        }).catch(err => _this.$message.error(err))
       }
     }
   }
@@ -303,6 +357,7 @@ export default {
   position: absolute;
   top: 0;
   background-color: rgba(0, 0, 0, 0.3);
+  display: none;
 }
 .contentwrap {
   width: 280px;
@@ -348,34 +403,35 @@ export default {
   font-size: 15px;
   padding-top: 20px;
 }
-.mybutton{
-  border: 1px solid #B3B3B3;
-border-radius: 2px;
-width: 84px;
-height: 31px;
+.mybutton {
+  border: 1px solid #b3b3b3;
+  border-radius: 2px;
+  width: 84px;
+  height: 31px;
 }
-.clicktime,.sendagain{
+.clicktime,
+.sendagain {
   float: right;
   margin: 20px 10px;
   text-align: center;
   line-height: 30px;
 }
-.sendverify{
+.sendverify {
   text-align: center;
   line-height: 30px;
-  color:#2179FE;
-  border-color: #2179FE;
+  color: #2179fe;
+  border-color: #2179fe;
 }
-.clicktime{
-  font-size:14px;
-  color:#B3B3B3;
-  border-color: #B3B3B3;
+.clicktime {
+  font-size: 14px;
+  color: #b3b3b3;
+  border-color: #b3b3b3;
 }
-.sendagain{
-  font-size:14px;
-  color:#2179FE;
+.sendagain {
+  font-size: 14px;
+  color: #2179fe;
   margin-top: 0;
-  border-color: #2179FE;
+  border-color: #2179fe;
   clear: both;
 }
 </style>

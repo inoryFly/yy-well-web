@@ -85,7 +85,8 @@ const router = new Router({
       name: 'mobilecenter',
       component: Center,
       meta: {
-        client: 'mobile'
+        client: 'mobile',
+        requireAuth: true
       }
     },
     {

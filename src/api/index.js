@@ -14,7 +14,7 @@ export function bindEmail (params) {
   return axios.post(url.bindEmail, params)
 }
 export function getUserInfoEth (params) {
-  return axios.get(url.userInfoEth, params)
+  return axios.get(url.userInfoEth)
 }
 export function userInfoEth (params) {
   return axios.post(url.userInfoEth, params)
