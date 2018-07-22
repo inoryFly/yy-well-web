@@ -19,5 +19,6 @@ export default {
   'mobile_pwd':remoteServer + '/auth/register/mobile',
   'mail_result': remoteServer + '/auth/email/',
   'banner': remoteServer + '/project/banner',
-  'userInfoList': remoteServer + '/user/info/list'
+  'userInfoList': remoteServer + '/user/info/list',
+  'porjectsearch':remoteServer + '/project/search'
 }

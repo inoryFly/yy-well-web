@@ -5,8 +5,10 @@
         </mt-header>
         <div v-if="current=='mobile'" class="topmargin">
           <mt-field placeholder="请输入绑定手机号" v-model="bindphone" v-bind:state="verifyphone"></mt-field>
+          <div id="__nc" style="margin:20px auto 0;width:100%;height:60px;">
+              <div id="nc"></div>
+          </div>
           <div class="mention">绑定后可用于账号登陆或密码找回</div>
-         
          <mt-button size="large" type="primary" @click="nextstep">下一步</mt-button>
         </div>
         <div v-if="current=='mobilenext'" class="topmargin">
@@ -22,6 +24,9 @@
         </div>
         <div v-else-if="current=='email'" class="topmargin">
           <mt-field placeholder="请输入绑定邮箱" v-model="bindemail" v-bind:state="verifyemail"></mt-field>
+          <div id="__nc" style="margin:20px auto 0;width:100%;height:60px;">
+              <div id="nc"></div>
+          </div>
           <div class="mention">绑定后可用于账号登陆或密码找回</div>
          <mt-button size="large" type="primary" @click="bindemails">立即绑定</mt-button>
         </div>
@@ -31,12 +36,21 @@
          <mt-button size="large" type="primary">立即绑定</mt-button>
         </div>
 
+        <div v-else-if="current=='info'" class="topmargin">
+          <mt-field placeholder="请输入真实姓名" v-model="realname"></mt-field>
+          <mt-field placeholder="请输入电话号码" v-model="realphone" v-bind:state="realphoneverify"></mt-field>
+          <mt-field placeholder="请输入您的身份证号" v-model="idcard" v-bind:state="idcardverify"></mt-field>
+          <div v-if="msg" style="padding:10px 12px 0;">{{msg}}</div>
+         <mt-button size="large" type="primary" style="margin-top:30px" @click="realnamesub">立即认证</mt-button>
+        </div>
+
         <div class="mymodal" v-if="current=='pocket'">
               <div class="contentwrap">
                   <span>绑定成功</span>
               </div>
               <div class="closeicon"></div>
         </div>
+
 
         <div class="mymodal" v-if="current=='email'" id="emails" @click="modaldisplay('emails')">
           <div class="modalwrap">
@@ -49,11 +63,11 @@
 </template>
 
 <script>
-import {userInfoList, bindPhone,bindEmail} from '../../../api/'
+import {userInfoList, bindPhone,bindEmail,userInfo,bindPhoneCode} from '../../../api/'
 export default {
   data() {
     return {
-      current: "mobile",
+      current: undefined,
       usermessage: undefined,
       title: "绑定手机号",
       minute:60,
@@ -62,10 +76,18 @@ export default {
       verifyphone:undefined,
       code:undefined,
       bindemail:undefined,
-      verifyemail:undefined
+      verifyemail:undefined,
+      realname:undefined,
+      realphone:undefined,
+      idcard:undefined,
+      realphoneverify:undefined,
+      idcardverify:undefined,
+      msg:undefined,
+      isSuccess:true
     };
   },
   mounted() {
+    var _this=this;
     this.current = this.$route.params.type;
     if (this.$route.params.type === "mobile") {
       this.title = "绑定手机号";
@@ -73,9 +95,96 @@ export default {
       this.title = "绑定邮箱";
     } else if (this.$route.params.type === "pocket") {
       this.title = "绑定钱包地址";
-    } else {
-      this.title = "绑定手机号";
+    }else if (this.$route.params.type === "info") {
+      this.title = "实名认证";
+      userInfo().then(res=>{
+        if(res.data.success){
+          _this.realname=res.data.data.realName
+          _this.realphone=res.data.data.phone
+          _this.idcard = res.data.data.idCard,
+          _this.msg =res.data.data.msg
+        }else{
+          _this.$message.error(res.data.error)
+        }
+      }).catch(err =>_this.$message.error(err) )
     }
+
+       //请务必确保这里调用一次reset()方法
+    
+
+  },
+  updated () {
+    var _this=this;
+    if(this.current == 'mobile' || this.current =='email'){
+      var ncToken = [
+        "FFFF0N00000000006266",
+        new Date().getTime(),
+        Math.random()
+      ].join(":");
+      var nc = NoCaptcha.init({
+        renderTo: "#nc",
+        appkey: "FFFF0N00000000006266",
+        scene: "nc_message",
+        token: ncToken,
+        trans: { key1: "code0" },
+        is_Opt: 0,
+        language: "cn",
+        timeout: 10000,
+        retryTimes: 5,
+        errorTimes: 5,
+        inline: false,
+        apimap: {
+          // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
+          // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
+        },
+        bannerHidden: false,
+        initHidden: false,
+        callback: function(data) {
+          window.console && console.log(ncToken);
+          window.console && console.log(data.csessionid);
+          window.console && console.log(data.sig);
+         if(_this.current == 'email'){
+           bindEmail({
+            email:_this.bindemail,
+            token:{
+                sig: data.sig,
+                token: ncToken,
+                csessionid: data.csessionid,
+                scene: "well_h5"
+            }
+            }).then(res => {
+              if(res.data.success){
+                _this.isSuccess=true
+              }else{
+                _this.isSuccess=false
+                _this.$message.error(res.data.error)
+              }
+            })
+         }else{
+           bindPhoneCode({
+            mobile:_this.bindphone,
+            token:{
+                sig: data.sig,
+                token: ncToken,
+                csessionid: data.csessionid,
+                scene: "well_h5"
+            }
+            }).then(res => {
+              if(res.data.success){
+                _this.isSuccess=true
+              }else{
+                _this.isSuccess=false
+                _this.$message.error(res.data.error)
+              }
+            })
+         }
+        },
+        error: function(s) {}
+      });
+      NoCaptcha.setEnabled(true);
+      nc.reset();
+    }
+
   },
   watch: {
     bindphone(){
@@ -93,6 +202,22 @@ export default {
       }else{
         this.verifyemail = 'success'
       }
+    },
+    realphone () {
+      var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/
+      if(!this.realphone || !phoneReg.test(this.realphone)){
+        this.realphoneverify = 'error'
+      }else{
+        this.realphoneverify = 'success'
+      }
+    },
+    idcard () {
+      var idReg =/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+      if(!this.idcard || !phoneReg.test(this.idcard)){
+        this.idcardverify = 'error'
+      }else{
+        this.idcardverify = 'success'
+      }
     }
   },
   methods: {
@@ -100,15 +225,18 @@ export default {
       this.$router.go(-1);
     },
     nextstep () {
-      if(this.verifyphone === 'success'){
-        this.current = "mobilenext"
-        this.time =setInterval(() => {
-        if (this.minute > 0) {
-          this.minute = this.minute - 1;
-        } else {
-          clearInterval(this.time);
-        }
-      }, 1000)
+      if(this.isSuccess){
+        this.isSuccess=false
+          this.current = "mobilenext"
+          this.time =setInterval(() => {
+            if (this.minute > 0) {
+              this.minute = this.minute - 1;
+            } else {
+              clearInterval(this.time);
+            }
+          }, 1000)
+      }else{
+        this.$message.error("验证失败，请重新验证")
       }
       
     },
@@ -134,6 +262,22 @@ export default {
     modaldisplay (ids) {
       var eles=document.querySelector('#'+ids);
       eles.style.display="none"
+    },
+    realnamesub () {
+      if(this.realphoneverify == 'success' && this.idcardverify && this.realname){
+        var _this=this;
+        userInfo({
+          idCard:_this.idcard,
+          realName:_this.realname,
+          phone:_this.realphone
+        }).then(res => {
+          if(res.data.success){
+            _this.$message.success("提交成功，等待审核")
+          }else{
+            _this.$message.error(res.data.error)
+          }
+        }).catch(err =>_this.$message.error(err) )
+      }
     }
   }
 };
@@ -144,6 +288,7 @@ export default {
   margin-top: 50px;
 }
 .mention {
+  margin-top: 10px;
   padding: 10px 0 36px 16px;
   color: #a3a8b0;
 }

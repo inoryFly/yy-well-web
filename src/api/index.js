@@ -52,3 +52,6 @@ export function mailResult (key) {
 export function banner () {
   return axios.get(url.banner)
 }
+export function porjectsearch(params){
+  return axios.post (url.porjectsearch,params)
+}

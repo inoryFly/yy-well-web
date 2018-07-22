@@ -1,151 +1,161 @@
 <template>
    <div class="page-tabbar">
-    <div class="title">
-        <mt-header fixed>
-          <mt-button icon="search" slot="right"></mt-button>
-        </mt-header>
-        <div class="titlecontent">项目列表</div>
-    </div>
+     <div v-if="search">
+       <!-- <mt-header> -->
+         <mt-search autofocus v-model="searchName" cancel-text="取消" :result="searchvalue"></mt-search>
+       <!-- </mt-header> -->
+     </div>
+     <div v-else>
 
-    <div class="nav">
-      <mt-button size="small" @click.native.prevent="switchMenu('BEING')" :class="current">正在众筹</mt-button>
-      <mt-button size="small" @click.native.prevent="switchMenu('COMMING_SOON')" :class="current2">即将开始</mt-button>
-      <mt-button size="small" @click.native.prevent="switchMenu('FINISH')" :class="current3">已截止</mt-button>
-    </div>
+        <div class="title">
+          <mt-header fixed>
+            <mt-button icon="search" slot="right" @click="search=true"></mt-button>
+          </mt-header>
+          <div class="titlecontent">项目列表</div>
+      </div>
+
+      <div class="nav">
+        <mt-button size="small" @click.native.prevent="switchMenu('BEING')" :class="current">正在众筹</mt-button>
+        <mt-button size="small" @click.native.prevent="switchMenu('COMMING_SOON')" :class="current2">即将开始</mt-button>
+        <mt-button size="small" @click.native.prevent="switchMenu('FINISH')" :class="current3">已截止</mt-button>
+      </div>
     
-    <div class="page-tab-container">
-      <mt-tab-container class="page-tabbar-tab-container" v-model="active" swipeable>
-        <mt-tab-container-item id="BEING" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
-           <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
-            <div class="picwrap"></div>
-            <div  class="contents">
-              <div class="maincontent">
-                <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
-                <span class="fr">
-                  <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
-                  <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
-                </span>
-              </div>
-              <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
-              <div class="simples" v-else>{{item.intro}}</div>
-              <div class="badge">
-                <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
-                <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
-              </div>
-              <div v-if="item.progress !== 0">
-                <div class="line">
-                  <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
-                  <span class="progressnumber">{{item.progress}}%</span>
+        <div class="page-tab-container">
+          <mt-tab-container class="page-tabbar-tab-container" v-model="active" swipeable>
+            <mt-tab-container-item id="BEING" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
+              <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
+                <div class="picwrap"></div>
+                <div  class="contents">
+                  <div class="maincontent">
+                    <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
+                    <span class="fr">
+                      <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                      <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
+                    </span>
+                  </div>
+                  <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
+                  <div class="simples" v-else>{{item.intro}}</div>
+                  <div class="badge">
+                    <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
+                    <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
+                  </div>
+                  <div v-if="item.progress !== 0">
+                    <div class="line">
+                      <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
+                      <span class="progressnumber">{{item.progress}}%</span>
+                    </div>
+                    <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
+                  </div>
                 </div>
-                <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
               </div>
-            </div>
-          </div>
-          <div v-if="loading" class="myloading">
+              <div v-if="loading" class="myloading">
+                <mt-spinner type="fading-circle" ></mt-spinner>
+                加载中... 
+              </div>
+            </mt-tab-container-item>
+            <mt-tab-container-item id="COMMING_SOON" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
+              <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
+                <div class="picwrap"></div>
+                <div  class="contents">
+                  <div class="maincontent">
+                    <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
+                    <span class="fr">
+                      <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                      <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
+                    </span>
+                  </div>
+                  <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
+                  <div class="simples" v-else>{{item.intro}}</div>
+                  <div class="badge">
+                    <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
+                    <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
+                  </div>
+                  <div v-if="item.progress !== 0">
+                    <div class="line">
+                      <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
+                      <span class="progressnumber">{{item.progress}}%</span>
+                    </div>
+                    <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
+                  </div>
+                </div>
+              </div>
+              <div v-if="loading" class="myloading">
             <mt-spinner type="fading-circle" ></mt-spinner>
             加载中... 
           </div>
-        </mt-tab-container-item>
-        <mt-tab-container-item id="COMMING_SOON" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
-          <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
-            <div class="picwrap"></div>
-            <div  class="contents">
-              <div class="maincontent">
-                <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
-                <span class="fr">
-                  <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
-                  <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
-                </span>
-              </div>
-              <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
-              <div class="simples" v-else>{{item.intro}}</div>
-              <div class="badge">
-                <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
-                <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
-              </div>
-              <div v-if="item.progress !== 0">
-                <div class="line">
-                  <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
-                  <span class="progressnumber">{{item.progress}}%</span>
+            </mt-tab-container-item>
+            
+            <mt-tab-container-item id="FINISH" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
+              <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
+                <div class="picwrap"></div>
+                <div  class="contents">
+                  <div class="maincontent">
+                    <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
+                    <span class="fr">
+                      <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
+                      <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
+                      <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
+                    </span>
+                  </div>
+                  <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
+                  <div class="simples" v-else>{{item.intro}}</div>
+                  <div class="badge">
+                    <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
+                    <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
+                  </div>
+                  <div v-if="item.progress !== 0">
+                    <div class="line">
+                      <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
+                      <span class="progressnumber">{{item.progress}}%</span>
+                    </div>
+                    <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
+                  </div>
                 </div>
-                <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
               </div>
-            </div>
+              <div v-if="loading" class="myloading">
+            <mt-spinner type="fading-circle" ></mt-spinner>
+            加载中... 
           </div>
-          <div v-if="loading" class="myloading">
-        <mt-spinner type="fading-circle" ></mt-spinner>
-        加载中... 
-      </div>
-        </mt-tab-container-item>
+            </mt-tab-container-item>
+            
+          </mt-tab-container>
+          
+        </div>
         
-        <mt-tab-container-item id="FINISH" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
-          <div class="contentwrap" v-for="(item,index) in contentList" :key="index">
-            <div class="picwrap"></div>
-            <div  class="contents">
-              <div class="maincontent">
-                <span><router-link :to="{path:'/mobiledetail',query: {projectId: item.projectId}}">{{item.name}}</router-link></span>
-                <span class="fr">
-                  <span class="newstar" v-if="parseInt(item.rating)>=1"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=2"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=3"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=4"></span>
-                  <span class="newstar" v-if="parseInt(item.rating)>=5"></span>
-                  <span class="starhalf" v-if="item.rating*2/2%1!==0"></span>
-                </span>
-              </div>
-              <div class="simple" v-if="item.progress !== 0">{{item.intro}}</div>
-              <div class="simples" v-else>{{item.intro}}</div>
-              <div class="badge">
-                <span v-for="(items,indexs) in item.tag" :key="indexs"><mt-badge size="small" color="#F5F8FA">{{items.tagName}}</mt-badge></span>
-                <mt-badge size="small" color="#F5F8FA" style="float:right">{{item.projectDateStr}}:{{item.projectDate}}</mt-badge>
-              </div>
-              <div v-if="item.progress !== 0">
-                <div class="line">
-                  <div class="progress" v-bind:style="{width:item.progress+'%'}"></div>
-                  <span class="progressnumber">{{item.progress}}%</span>
-                </div>
-                <span style="float:right;margin-top: 3px;font-size: 12px;width:60px">{{item.totalLimit}}ETH</span>
-              </div>
-            </div>
-          </div>
-          <div v-if="loading" class="myloading">
-        <mt-spinner type="fading-circle" ></mt-spinner>
-        加载中... 
-      </div>
-        </mt-tab-container-item>
-        
-      </mt-tab-container>
-      
-    </div>
-    
 
-    <mt-tabbar v-model="selected" fixed>
-      <mt-tab-item id="项目列表">
-        <img slot="icon" src="../../../images/projectactive.png">
-        项目列表
-      </mt-tab-item>
-      <mt-tab-item id="众筹记录" @click.native="gopath(1)">
-        <img slot="icon" src="../../../images/record.png">
-        众筹记录
-      </mt-tab-item>
-      <mt-tab-item id="个人中心" @click.native="gopath(2)">
-        <img slot="icon" src="../../../images/person.png">
-        个人中心
-      </mt-tab-item>
-    </mt-tabbar>
+        <mt-tabbar v-model="selected" fixed>
+          <mt-tab-item id="项目列表">
+            <img slot="icon" src="../../../images/projectactive.png">
+            项目列表
+          </mt-tab-item>
+          <mt-tab-item id="众筹记录" @click.native="gopath(1)">
+            <img slot="icon" src="../../../images/record.png">
+            众筹记录
+          </mt-tab-item>
+          <mt-tab-item id="个人中心" @click.native="gopath(2)">
+            <img slot="icon" src="../../../images/person.png">
+            个人中心
+          </mt-tab-item>
+        </mt-tabbar>
+     </div>
+   
   </div>
 </template>
 
 <script>
 import axios from "../../../api/axios.conf.js";
+import {porjectsearch} from "../../../api/"
 export default {
   name: "page-tabbar",
   data() {
@@ -156,7 +166,11 @@ export default {
       currentPage: 1,
       totalPage: 1,
       contentList: [],
-      loading: false
+      loading: false,
+      search:false,
+      searchName:undefined,
+      searchvalue:[],
+      timer:null
     };
   },
   computed: {
@@ -182,6 +196,28 @@ export default {
   watch:{
     active () {
       this.toList(this.active,false)
+    },
+    searchName () {
+      if(this.timer){
+        clearTimeout(this.timer)
+      }
+    var _this=this;
+    if(_this.searchName!=undefined&&_this.searchName !=""){
+      this.timer = setTimeout ( () =>{
+            porjectsearch({
+              searchName:_this.searchName
+            }).then(res => {
+              if(res.data.success){
+                  _this.searchvalue=res.data.data.content
+              }else{
+                _this.$message.error(res.data.error)
+              }
+            }).catch(err => {
+              _this.$message.error(err)
+            })
+            
+          },800)
+    }
     }
   },
   methods: {
@@ -217,7 +253,7 @@ export default {
             if (!bool) {
               _this.contentList = res.data.data.content;
             } else {
-              _this.contentList.push(res.data.data.content);
+              _this.contentList.push(...res.data.data.content);
             }
           }
         })
@@ -230,7 +266,8 @@ export default {
         this.currentPage=this.currentPage+1;
         this.toList(this.active, true);
       }
-    }
+    },
+    
   }
 };
 </script>
@@ -363,5 +400,11 @@ export default {
     vertical-align: middle !important;
     margin-right: 5px !important;
   }
+}
+.mint-searchbar{
+  background-color:#26a2ff !important;
+}
+.mint-searchbar-cancel{
+color:white !important;
 }
 </style>

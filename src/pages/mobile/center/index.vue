@@ -14,6 +14,10 @@
                 <span style="color:#2179FE" v-if="mobile.value === ''">去绑定</span>
                 <span style="color:#2179FE" v-else>{{mobile.value}}</span>
             </mt-cell>
+            <mt-cell title="实名认证" is-link @click.native="gobind('info')">
+                <span style="color:#2179FE" v-if="info.value === ''">去绑定</span>
+                <span style="color:#666666" v-else>{{info.value}}</span>
+            </mt-cell>
             <mt-cell title="绑定以太坊钱包" is-link @click.native="gobind('pocket')">
                 <span style="color:#2179FE" v-if="pocket.value === ''">去绑定</span>
                 <span style="color:#666666" v-else>{{pocket.value}}</span>
@@ -46,7 +50,8 @@ export default {
       selected: "个人中心",
       mobile: {status:"",value:""},
       email: {status:"",value:""},
-      pocket: {status:"",value:""}
+      pocket: {status:"",value:""},
+      info: {status:"",value:""}
     };
   },
   mounted () {
@@ -55,6 +60,7 @@ export default {
           this.mobile=res.data.data.phone
           this.email=res.data.data.email
           this.pocket=res.data.data.eth
+          this.info =res.data.data.info
         }
       })
   },
@@ -76,7 +82,7 @@ export default {
         this.$router.push({ name: "mobilebinding", params: { type: active } });
       }else if (this[active].value == "" && this[active].status === 'AUTH'){
         this.$message.error("请先完成实名认证")
-      }else if(this[active] === 'FINAL'){
+      }else if(this[active].status === 'FINAL'){
         this.$message.error("该信息不可更改")
       }
       

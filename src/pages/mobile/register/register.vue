@@ -78,55 +78,55 @@ export default {
       messageinput: undefined
     };
   },
-  //   mounted () {
-  //     var _this = this;
-  //     if (this.phone) {
-  //       var ncToken = [
-  //         "FFFF0N00000000006266",
-  //         new Date().getTime(),
-  //         Math.random()
-  //       ].join(":");
-  //       var nc = NoCaptcha.init({
-  //         renderTo: "#nc",
-  //         appkey: "FFFF0N00000000006266",
-  //         scene: "nc_message",
-  //         token: ncToken,
-  //         trans: { key1: "code0" },
-  //         is_Opt: 0,
-  //         language: "cn",
-  //         timeout: 10000,
-  //         retryTimes: 5,
-  //         errorTimes: 5,
-  //         inline: false,
-  //         apimap: {
-  //           // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
-  //           // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
-  //         },
-  //         bannerHidden: false,
-  //         initHidden: false,
-  //         callback: function(data) {
-  //           window.console && console.log(ncToken);
-  //           window.console && console.log(data.csessionid);
-  //           window.console && console.log(data.sig);
-  //           _this.params = {
-  //             email: _this.email,
-  //             password:_this.pwd,
-  //             repPassword:_this.repwd,
-  //             token: {
-  //               sig: data.sig,
-  //               token: ncToken,
-  //               csessionid: data.csessionid,
-  //               scene: "well_h5"
-  //             }
-  //           }
-  //           _this.hk = true
-  //         },
-  //         error: function(s) {}
-  //       });
-  //       NoCaptcha.setEnabled(true);
-  //       nc.reset(); //请务必确保这里调用一次reset()方法
-  //     }
-  //   },
+    mounted () {
+      var _this = this;
+      if (this.phone) {
+        var ncToken = [
+          "FFFF0N00000000006266",
+          new Date().getTime(),
+          Math.random()
+        ].join(":");
+        var nc = NoCaptcha.init({
+          renderTo: "#nc",
+          appkey: "FFFF0N00000000006266",
+          scene: "nc_message",
+          token: ncToken,
+          trans: { key1: "code0" },
+          is_Opt: 0,
+          language: "cn",
+          timeout: 10000,
+          retryTimes: 5,
+          errorTimes: 5,
+          inline: false,
+          apimap: {
+            // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
+            // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
+          },
+          bannerHidden: false,
+          initHidden: false,
+          callback: function(data) {
+            window.console && console.log(ncToken);
+            window.console && console.log(data.csessionid);
+            window.console && console.log(data.sig);
+            _this.params = {
+              email: _this.email,
+              password:_this.pwd,
+              repPassword:_this.repwd,
+              token: {
+                sig: data.sig,
+                token: ncToken,
+                csessionid: data.csessionid,
+                scene: "well_h5"
+              }
+            }
+            _this.hk = true
+          },
+          error: function(s) {}
+        });
+        NoCaptcha.setEnabled(true);
+        nc.reset(); //请务必确保这里调用一次reset()方法
+      }
+    },
   updated() {
     var _this = this;
     if (!this.regitster) {

@@ -11,39 +11,71 @@
         </mt-navbar>
 
         <mt-tab-container v-model="selected">
-      <mt-tab-container-item id="ALL">
-        <div class="contentwrap">
-          <div class="picwrap"></div>
+      <mt-tab-container-item id="ALL" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
+        <div class="contentwrap" v-for="(item,index) in tableData" :key="index">
+          <div class="picwrap">
+            <img :src="item.icon_url" alt="">
+          </div>
           <div class="worddesc">
             <div class="maincontent">
-              <span>我是项目名称</span>
-              <span class="fr">￥ 300,000.00</span>
+              <span>{{item.name}}</span>
+              <span class="fr">￥ {{item.amount}}</span>
             </div>
             <div>
-              <span style="color:#666666">我是代币名称</span>
-              <span class="success">已完成</span>
+              <span style="color:#666666">{{item.coin_name}}</span>
+              <span class="wait" v-if="item.status == 'INIT'">待发币</span>
+              <span class="success" v-else>已完成</span>
             </div>
           </div>
         </div>
-        <div class="contentwrap">
-          <div class="picwrap"></div>
+        <div v-if="loading" class="myloading">
+        <mt-spinner type="fading-circle" ></mt-spinner>
+        加载中... 
+      </div>
+      </mt-tab-container-item>
+      <mt-tab-container-item id="INIT" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
+        <div class="contentwrap" v-for="(item,index) in tableData" :key="index">
+          <div class="picwrap">
+            <img :src="item.icon_url" alt="">
+          </div>
           <div class="worddesc">
-            <div style="margin-bottom:10px">
-              <span>我是项目名称</span>
-              <span class="fr">￥ 300,000.00</span>
+            <div class="maincontent">
+              <span>{{item.name}}</span>
+              <span class="fr">￥ {{item.amount}}</span>
             </div>
             <div>
-              <span style="color:#666666">我是代币名称</span>
-              <span class="wait">待发币</span>
+              <span style="color:#666666">{{item.coin_name}}</span>
+              <span class="wait" v-if="item.status == 'INIT'">待发币</span>
+              <span class="success" v-else>已完成</span>
             </div>
           </div>
         </div>
+        <div v-if="loading" class="myloading">
+        <mt-spinner type="fading-circle" ></mt-spinner>
+        加载中... 
+      </div>
       </mt-tab-container-item>
-      <mt-tab-container-item id="INIT">
-        2
-      </mt-tab-container-item>
-      <mt-tab-container-item id="FINAL">
-       3
+      <mt-tab-container-item id="FINAL" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
+      <div class="contentwrap" v-for="(item,index) in tableData" :key="index">
+          <div class="picwrap">
+            <img :src="item.icon_url" alt="">
+          </div>
+          <div class="worddesc">
+            <div class="maincontent">
+              <span>{{item.name}}</span>
+              <span class="fr">￥ {{item.amount}}</span>
+            </div>
+            <div>
+              <span style="color:#666666">{{item.coin_name}}</span>
+              <span class="wait" v-if="item.status == 'INIT'">待发币</span>
+              <span class="success" v-else>已完成</span>
+            </div>
+          </div>
+        </div>
+       <div v-if="loading" class="myloading">
+        <mt-spinner type="fading-circle" ></mt-spinner>
+        加载中... 
+      </div>
       </mt-tab-container-item>
     </mt-tab-container>
   </div>
@@ -55,24 +87,60 @@ export default {
   name: "page-tabbar",
   data() {
     return {
-      selected: "ALL"
+      selected: "ALL",
+      loading: false,
+      currentPage:1,
+      total:0,
+      tableData:[]
     };
   },
   mountd () {
-    this.getList();
+    this.getList(false);
   },
   watch:{
     selected () {
-      this.getList()
+      this.getList(false)
     }
   },
   methods:{
       goback () {
         this.$router.go(-1)
       },
-      getList () {
-
-      }
+      getList (bool) {
+        var _this = this
+        if(!bool){
+          this.tableData=[]
+        }
+        var url = 'http://47.74.158.5:8889/project/invest/list?size=8&page=' + this.currentPage+"&&status="+this.selected
+        axios.get(url).then(res => {
+          if (res.data.success) {
+            if(!bool){
+              _this.tableData = res.data.data.content
+            }else{
+              _this.tableData.push(...res.data.data.content)  
+            }
+            _this.total = res.data.data.totalElements
+            _this.currentPage = res.data.data.number
+           
+            _this.loading = false
+          } else {
+            _this.loading = false
+            _this.$message.error(res.data.error)
+          }
+        }).catch((error) => {
+          _this.loading = false
+          _this.$message.error(error)
+        })
+      },
+      loadMore() {
+        if(this.tableData.length<this.total){
+          this.currentPage=this.currentPage+1;
+        this.loading=true;
+         this.getList(true)
+        }
+        
+       
+    }
   }
 };
 </script>
@@ -97,8 +165,12 @@ export default {
     width: 50px;
     margin-right: 15px;
     border-radius: 25px;
-    background: url('../../../images/github.png') no-repeat 100%;
     float: left;
+    img{
+      width: 50px;
+      height: 50px;
+      border: none;
+    }
   }
   .fr{
     float: right;
