@@ -54,6 +54,7 @@ export default {
         }
     },
     mounted () {
+        console.log(this.$store.state.details)
         if(!this.$store.state.details.isStart){
             var start=new Date()
             var end=new Date(this.$store.state.details.projectStartDate);

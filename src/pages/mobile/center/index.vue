@@ -8,11 +8,11 @@
         <div class="content">
             <mt-cell title="绑定邮箱" is-link @click.native="gobind('email')">
                 <span style="color:#2179FE" v-if="email.value === ''">去绑定</span>
-                <span style="color:#2179FE" v-else>{{email.value}}</span>
+                <span style="color:#666666" v-else>{{email.value}}</span>
             </mt-cell>
             <mt-cell title="绑定手机号" is-link style="margin-bottom:15px" @click.native="gobind('mobile')">
                 <span style="color:#2179FE" v-if="mobile.value === ''">去绑定</span>
-                <span style="color:#2179FE" v-else>{{mobile.value}}</span>
+                <span style="color:#666666" v-else>{{mobile.value}}</span>
             </mt-cell>
             <mt-cell title="实名认证" is-link @click.native="gobind('info')">
                 <span style="color:#2179FE" v-if="info.value === ''">去绑定</span>

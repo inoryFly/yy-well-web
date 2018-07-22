@@ -94,7 +94,8 @@ export default {
       tableData:[]
     };
   },
-  mountd () {
+  mounted () {
+    console.log(sessionStorage.getItem('token'))
     this.getList(false);
   },
   watch:{

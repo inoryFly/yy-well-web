@@ -186,7 +186,7 @@ export default {
         login(params)
           .then(res => {
             if (res.data.success) {
-              sessionStorage.setItem("token", res.data.token);
+              sessionStorage.setItem("token", res.data.data.token);
               if (res.data.data.token) {
                 sessionStorage.setItem("isLogin", true);
               }
@@ -234,7 +234,7 @@ export default {
       loginMobile(params1)
         .then(res => {
           if (res.data.success) {
-            sessionStorage.setItem("token", res.data.token);
+            sessionStorage.setItem("token", res.data.data.token);
             if (res.data.token) {
               sessionStorage.setItem("isLogin", true);
             }
