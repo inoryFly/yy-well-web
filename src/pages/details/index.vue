@@ -3,26 +3,33 @@
     <div class="qkl-details">
       <div class="qkl-details-container">
         <div class="qkl-detalis-link">
-          <img class="qkl-detalis-img" src="detailDatas.iconUrl" alt="">
+          <img class="qkl-detalis-img" :src="detailDatas.iconUrl" alt="">
         </div>
         <div class="qkl-detalis-obj">
           <div class="qkl-detalis-name">
             <span>{{detailDatas.projectName}}</span>
             |
             <span>{{detailDatas.coinName}}</span>
+
+            <div class="qkl-details-tags">
+              <div class="qkl-tags" v-if="detailDatas.tags.length > 0">
+                <span class="qkl-tag" v-for="tag in detailDatas.tags" :key="tag.id">{{tag.tagName}}</span>
+              </div>
+            </div>
           </div>
           <div class="qkl-items">
             <div class="qkl-item">
-              <span class="qkl-item-title">总额度</span>
-              <span class="qkl-percent text-blue">{{detailDatas.totalLimit}}</span>
+              <span class="qkl-item-title">剩余额度/总额度</span>
+              <span class="qkl-percent text-blue">{{detailDatas.totalLimit != undefined ? detailDatas.surplusLimit + '/' +detailDatas.totalLimit : ''}}</span>
+            </div>
+
+            <div class="qkl-item">
+              <span class="qkl-item-title">渠道费用</span>
+              <span class="qkl-time">{{detailDatas.channelRate}}</span>
             </div>
             <div class="qkl-item">
               <span class="qkl-item-title">开始时间</span>
               <span class="qkl-time">{{detailDatas.projectStartDate}}</span>
-            </div>
-            <div class="qkl-item">
-              <span class="qkl-item-title">剩余额度</span>
-              <span class="qkl-percent text-green">{{detailDatas.surplusLimit}}</span>
             </div>
             <div class="qkl-item">
               <span class="qkl-item-title">结束时间</span>
@@ -30,11 +37,7 @@
             </div>
           </div>
         </div>
-        <div class="qkl-details-tags">
-          <div class="qkl-tags" v-if="detailDatas.tags.length > 0">
-            <span class="qkl-tag" v-for="tag in detailDatas.tags" :key="tag.id">{{tag.tagName}}</span>
-          </div>
-        </div>
+
         <div class="clearfix">
           <a class="qkl-btn" :href="detailDatas.webSiteUrl" @click="tipHandle($event, 'webSiteUrl')" target="_blank">进入官网</a>
           <a class="qkl-btn" :href="detailDatas.whitePaperLink" @click="tipHandle($event, 'whitePaperLink')" target="_blank" download>下载白皮书</a>
@@ -72,7 +75,7 @@
       </div>
       <div class="qkl-panel-content" v-if="detailDatas.projectRatings.length > 0">
         <div v-for="(pro,i) in detailDatas.projectRatings" :key="i">
-          <div class="title">{{pro.orgName}}</div>
+          <div class="title" style="width: 400px">{{pro.orgName}}<div style="float:right;">{{pro.orgRating}}</div></div>
           <p>{{pro.orgRatingInfo}}</p>
        </div>
       </div>
@@ -114,7 +117,8 @@ export default{
   data () {
     return {
       detailDatas: {},
-      isShowPanel: false
+      isShowPanel: false,
+      serverUrl: localStorage.getItem('server')
     }
   },
   components: {
@@ -126,7 +130,7 @@ export default{
   },
   computed: {
     isLogin () {
-      return sessionStorage.getItem('isLogin')
+      return localStorage.getItem('isLogin')
     }
   },
   methods: {
@@ -140,7 +144,7 @@ export default{
     getDetail () {
       var id = window.location.href.split('=')[1]
       var _this = this
-      axios.get('http://47.74.158.5:8889/project/info?projectId=' + id).then(res => {
+      axios.get(_this.serverUrl + '/project/info?projectId=' + id).then(res => {
         if (res.data.success) {
           _this.detailDatas = res.data.data
         } else {
@@ -149,6 +153,14 @@ export default{
       }).catch(error => _this.$message(error))
     },
     showDt () {
+      if (!this.detailDatas.isAuth) {
+        this.$message('请先绑定钱包地址')
+        return
+      }
+      if (this.detailDatas.isFinish) {
+        this.$message('项目已截止')
+        return
+      }
       if (this.isLogin) {
         this.isShowPanel = true
         if (this.detailDatas.isStart && !qr) {
@@ -216,7 +228,7 @@ export default{
   vertical-align: top;
   margin-left: 25px;
   font-size: 14px;
-  width: 300px;
+  width: 430px;
 }
 .qkl-detalis-name{
   font-size: 16px;
@@ -251,6 +263,7 @@ export default{
 .qkl-details-tags{
   display: inline-block;
   font-size: 14px;
+  float: right;
   .qkl-tag{
     padding: 5px 20px;
     font-size: 12px;

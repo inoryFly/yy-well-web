@@ -13,7 +13,7 @@
         <li class="menu-item" :class="{'active': $route.name === 'history'}"><router-link to="/history">众筹记录</router-link></li>
       </ul>
     </div>
-    <div class="login" v-show="!isLogin" style="float:left;">
+    <div class="login" v-show="!isLogin">
       <a href="javascript: void(0);" class="" @click="toLogin">登录</a>
       <a href="javascript: void(0);" @click="toReg">注册</a>
     </div>
@@ -31,7 +31,7 @@
 <script>
 import loginPanel from '@pages/login/login'
 import registerPanel from '@pages/register/register'
-import { mailResult } from '../api/'
+import { mailResult, bindResult } from '../api/'
 export default{
   name: 'my-header',
   data () {
@@ -63,7 +63,7 @@ export default{
   computed: {
     isLogin () {
     // return this.$store.state.isLogin
-      return sessionStorage.getItem('isLogin')
+      return localStorage.getItem('isLogin')
     }
   },
   // watch: {
@@ -71,12 +71,27 @@ export default{
   // },
   created () {
     var verifyKey = this.$route.query.verifyKey
-    if (!this.isLogin && verifyKey) {
+    var method = this.$route.query.method
+    if (!this.isLogin && verifyKey && method === 'register') {
       this.isShowLogin = true
       mailResult(verifyKey).then(dat => {
         let data = dat.data
         if (data.success) {
           this.$message.success(data.data)
+        } else {
+          this.$message.error(data.error)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
+    if (method === 'bind' && verifyKey) {
+      bindResult(verifyKey).then(dat => {
+        let data = dat.data
+        if (data.success) {
+          this.$message.success(data.data)
+          this.$router.push('users')
         } else {
           this.$message.error(data.error)
         }
@@ -117,8 +132,8 @@ export default{
     //   }
     // },
     exit () {
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('isLogin')
+      localStorage.removeItem('token')
+      localStorage.removeItem('isLogin')
       location.reload()
     }
   }

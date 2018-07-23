@@ -11,7 +11,7 @@
       <ul class="lists">
         <li class="list-item" v-for="(item, index) in contentList" :key='index'>
           <div class="img-container">
-            <img :src="item.iconUrl" />
+            <router-link :to="{path:'/details',query: {projectId: item.projectId}}"><img :src="item.iconUrl" /></router-link>
             <span :class="item.status">{{statusName[item.status]}}</span>
           </div>
           <div class="text-container">
@@ -23,7 +23,7 @@
               <li v-for="(tag) in item.tags" :key='tag.id'><a href="javascript:;">{{tag.tagName}}</a></li>
             </ul>
             <star :score="item.rating"></star>
-            <div class="progress-container">
+            <div class="progress-container" v-show="item.canInvest">
               <el-progress :percentage="item.progress" :stroke-width="18" color="#2487f8"></el-progress>
               <span class="progress-txt">{{item.totalLimit}}ETH</span>
             </div>
@@ -61,7 +61,7 @@ export default{
       pageSize: 8,
       total: 3,
       loading: true,
-      dissUrl: 'http://47.74.158.5:8889',
+      dissUrl: localStorage.getItem('server'),
       pageType: '1'
     }
   },

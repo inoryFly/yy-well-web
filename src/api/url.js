@@ -1,8 +1,8 @@
-let remoteServer = 'http://47.74.158.5:8889'
-//  http://localhost:8889/project/list?status=BEING&page=0&size=8
+let remoteServer = 'https://www.wellico.io/api'
 if (process.env === 'production') {
-  remoteServer = 'www.wellico.io/api'
+  remoteServer = 'http://www.wellico.io/api'
 }
+localStorage.setItem('server', remoteServer)
 export default {
   'remoteServer': remoteServer,
   'getUInfoDetail': remoteServer + '/user/info/detail',
@@ -19,6 +19,8 @@ export default {
   'mobile_reg':remoteServer + '/auth/register/sendSms',
   'mobile_pwd':remoteServer + '/auth/register/mobile',
   'mail_result': remoteServer + '/auth/email/',
+  'bind_mail_result': remoteServer + '/user/info/email/bind/',
+  'reset_pwd_result': remoteServer + '/auth/resetPwd',
   'banner': remoteServer + '/project/banner',
   'userInfoList': remoteServer + '/user/info/list',
   'porjectsearch':remoteServer + '/project/search',

@@ -50,7 +50,8 @@ export default{
         username: [
           {required: true, trigger: 'blur', validator: validUserName}
         ]
-      }
+      },
+      serverUrl: localStorage.getItem('server')
     }
   },
   mounted () {
@@ -91,7 +92,7 @@ export default{
             'scene':'well_sms'
           }
         }
-        var url = 'http://47.74.158.5:8889/auth/findPwd'
+        var url = _this.serverUrl + '/auth/findPwd'
         axios.post(url, params).then(res => {
           if (res.data.success) {
             _this.$message(res.data.data)

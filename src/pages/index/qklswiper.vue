@@ -3,7 +3,7 @@
     <div class="swiper-container">
       <div class="swiper-wrapper">
         <div class="swiper-slide" v-for="(list, index) in imgsList" :key="index">
-          <a :href="list.href" :class="{'swiper-slide-center none-effect': index === 0}">
+          <a :href="list.href" target="_blank" :class="{'swiper-slide-center none-effect': index === 0}">
             <img :src="list.url" >
           </a>
         </div>
@@ -27,8 +27,7 @@ export default {
   name: 'swiper',
   data () {
     return {
-      imgsList: [
-      ]
+      imgsList: []
     }
   },
   mounted () {
@@ -38,17 +37,19 @@ export default {
       let data = dat.data
       if (data.success) {
         this.imgsList = data.data
-        let swiper = new Swiper('.swiper-container', {
-          autoplay: 3000,
-          speed: 1000,
-          autoplayDisableOnInteraction: false,
-          loop: true,
-          centeredSlides: true,
-          pagination: '.swiper-pagination',
-          paginationClickable: true,
-          onInit: function (swiper) {
-            // swiper.slides[2].className = 'swiper-slide swiper-slide-active' // 第一次打开不要动画
-          }
+        this.$nextTick(function () {
+          let swiper = new Swiper('.swiper-container', {
+            autoplay: 3000,
+            speed: 1000,
+            autoplayDisableOnInteraction: false,
+            loop: true,
+            centeredSlides: true,
+            pagination: '.swiper-pagination',
+            paginationClickable: true,
+            onInit: function (swiper) {
+              swiper.slides[2].className = 'swiper-slide swiper-slide-active' // 第一次打开不要动画
+            }
+          })
         })
       } else {
         this.$message.error(data.error)

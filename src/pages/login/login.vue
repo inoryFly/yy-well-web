@@ -190,9 +190,9 @@ export default{
           var params = {'username': this.ruleForm1.username, 'password': this.ruleForm1.pwd}
           login(params).then(res => {
             if (res.data.success) {
-              sessionStorage.setItem("token", res.data.data.token)
+              localStorage.setItem("token", res.data.data.token)
               if (res.data.data.token) {
-                sessionStorage.setItem("isLogin", true)
+                localStorage.setItem("isLogin", true)
               }
               this.closePanel()
               location.reload()
@@ -218,9 +218,9 @@ export default{
           var _this = this
           loginMobile(params1).then(res => {
             if (res.data.success) {
-              sessionStorage.setItem("token", res.data.data.token)
+              localStorage.setItem("token", res.data.data.token)
               if (res.data.data.token) {
-                sessionStorage.setItem("isLogin", true)
+                localStorage.setItem("isLogin", true)
                 location.reload()
               } else {
                 this.$message.error('登录失败')

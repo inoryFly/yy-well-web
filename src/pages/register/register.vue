@@ -121,6 +121,7 @@ export default{
       isSuccess: false,
       isSuccess2: false,
       isSuccessPop: false,
+      serverUrl: localStorage.getItem('server'),
       ruleForm1: {
         username: '',
         pwd1: '',
@@ -206,7 +207,7 @@ export default{
             'scene':'well_sms'
           }
         }
-        var url = 'http://47.74.158.5:8889/auth/register'
+        var url = _this.serverUrl + '/auth/register'
         axios.post(url, params).then(res => {
           if (res.data.success) {
           	_this.isSuccess = true
@@ -260,7 +261,7 @@ export default{
             'scene':'well_sms'
           }
         }
-        var url = 'http://47.74.158.5:8889/auth/register/sendSms'
+        var url = _this.serverUrl + '/auth/register/sendSms'
         axios.post(url, par).then(res => {
           if (res.data.success) {
             _this.isSuccess2 = true
@@ -308,8 +309,7 @@ export default{
               'rePassword': this.ruleForm2.pwd2
             }
             var _this = this
-            console.log(params)
-            var url = 'http://47.74.158.5:8889/auth/register/mobile'
+            var url = _this.serverUrl + '/auth/register/mobile'
             axios.post(url, params).then(res => {
               if (res.data.success) {
                 _this.$message('注册成功')

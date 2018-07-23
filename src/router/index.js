@@ -7,6 +7,8 @@ import History from '@pages/history/index'
 import Users from '@pages/users/index'
 import Privacypolicy from '@pages/static/privacypolicy'
 import Termofuse from '@pages/static/termofuse'
+import AboutUs from '@pages/static/aboutUs'
+import Resetpwd from '@pages/findpwd/resetpwd'
 import Mobilelogin from '@pages/mobile/login/login'
 import Register from '@pages/mobile/register/register'
 import Center from '@pages/mobile/center/index'
@@ -64,6 +66,16 @@ const router = new Router({
       path: '/termofuse',
       name: 'termofuse',
       component: Termofuse
+    },
+    {
+      path: '/aboutUs',
+      name: 'aboutUs',
+      component: AboutUs
+    },
+    {
+      path: '/resetPwd',
+      name: 'resetPwd',
+      component: Resetpwd
     },
     {
       path: '/login',
@@ -135,7 +147,14 @@ const router = new Router({
         client: 'mobile'
       }
     }
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 })
 
 router.beforeEach((to, from, next) => {

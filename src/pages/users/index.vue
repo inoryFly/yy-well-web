@@ -41,9 +41,15 @@
       </div>
     </div>
     <div class="qkl-panel pull-right" v-show="ctrl.tab === 2" v-loading="loading1" element-loading-text="拼命加载中..." element-loading-background="rgba(0, 0, 0, 0.2)">
+
       <div class="qkl-panel-title">
         <h3>绑定钱包信息</h3>
       </div>
+
+      <el-alert
+        :title="ethMsg" v-show="ethMsg"
+        type="info" style="margin: 20px;" show-icon :closable="false">
+      </el-alert>
       <div class="qkl-panel-content">
         <label>
           绑定以太坊地址:  <input type="text" class="qkl-input" v-model="eth"
@@ -95,7 +101,12 @@
           <span class="error-tips" v-show="ctrl.idCard">身份证号码格式错误</span>
         </div>
         <div class="qkl-btn-group" style="margin-bottom:10px;" >
-          <label class="qkl-label"  v-show="ctrl.status === 'UPDATE'">提交后将在半小时左右进行审核，审核后不可修改。</label>
+          <p v-show="this.infoError"><label style="font-size: 14px;color: #f00;line-height: 20px;">{{infoError}}</label></p>
+
+          <ul>
+            <li>1. 提交后将在半小时左右进行审核，审核后不可修改</li>
+            <li>2. 请确保提交的身份信息和手机号对应，否则无法通过审核</li>
+          </ul>
         </div>
         <div class="qkl-btn-group">
           <button class="qkl-btn" @click="submitVal" v-show="ctrl.status === 'UPDATE'">提交</button>
@@ -134,13 +145,15 @@ export default {
       username: null,
       phoneNum: null,
       idCard: null,
-      eth: ''
+      eth: '',
+      infoError:'',
+      ethMsg:''
     }
   },
   computed: {
     token () {
     // return this.$store.state.token
-      return sessionStorage.getItem('token')
+      return localStorage.getItem('token')
     }
   },
   created () {
@@ -197,6 +210,7 @@ export default {
             if (data.success) {
               self.$message.success('验证码已发送，请查收')
             } else {
+              nc.reload()
               self.$message.error(data.error)
             }
           }).catch((err) => {
@@ -218,6 +232,7 @@ export default {
               self.$message.success('验证成功')
               self.ctrl.emailSuc = true
             } else {
+              nc.reload()
               self.ctrl.emailSuc = false
               self.$message.error(data.error)
             }
@@ -294,6 +309,7 @@ export default {
           this.loading1 = false
           this.eth = data.data.ethAddress
           this.ctrl.eth = data.data.status
+          this.ethMsg = data.data.msg
           if (data.data.status === 'AUTH') {
             this.$message({
               type: 'error',
@@ -318,6 +334,7 @@ export default {
             type: 'success',
             message: '提交成功'
           })
+          this.ctrl.eth = 'FINAL'
         } else {
           this.$message({
             type: 'error',
@@ -338,6 +355,7 @@ export default {
           this.username = data.data.realName
           this.idCard = data.data.idCard
           this.ctrl.status = data.data.status
+          this.infoError = data.data.msg
           // console.log(this.ctrl.status)
         } else {
           this.$message({
@@ -361,6 +379,7 @@ export default {
             type: 'success',
             message: '提交成功'
           })
+          this.ctrl.status = 'FINAL'
         } else {
           this.$message({
             type: 'error',
@@ -522,6 +541,14 @@ label{
   display: inline-block;
   width: 75px;
   text-align: right;
+}
+.qkl-btn-group ul{
+  margin-top:10px;
+}
+.qkl-btn-group ul li{
+  font:	13px Extra Small;
+  color: #7a7a7a;
+  line-height: 23px;
 }
 .my-nc-container{width:225px;height:35px;vertical-align: middle;display: inline-block;margin-bottom:0; margin-left: 6px;}
 .nc-container .nc_wrapper{width:100% !important;}

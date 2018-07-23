@@ -14,7 +14,7 @@ export function bindEmail (params) {
   return axios.post(url.bindEmail, params)
 }
 export function getUserInfoEth (params) {
-  return axios.get(url.userInfoEth)
+  return axios.get(url.userInfoEth, params)
 }
 export function userInfoEth (params) {
   return axios.post(url.userInfoEth, params)
@@ -31,6 +31,7 @@ export function userInfoList (params) {
 export function login (params) {
   return axios.post(url.login, params)
 }
+
 export function loginMobile (params) {
   return axios.post(url.login_mobile, params)
 }
@@ -38,7 +39,7 @@ export function sendSms (params) {
   return axios.post(url.send_sms, params)
 }
 export function mailReg (params) {
-  return axios.post(url.mail_reg,params)
+  return axios.post(url.mail_reg)
 }
 export function mobileReg (params) {
   return axios.post (url.mobile_reg,params)
@@ -48,6 +49,12 @@ export function mobilePwd (params) {
 }
 export function mailResult (key) {
   return axios.get(`${url.mail_result}${key}`)
+}
+export function bindResult (key) {
+  return axios.get(`${url.bind_mail_result}${key}`)
+}
+export function resetResult (param) {
+  return axios.post(`${url.reset_pwd_result}`, param)
 }
 export function banner () {
   return axios.get(url.banner)

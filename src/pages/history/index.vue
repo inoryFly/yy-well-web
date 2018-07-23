@@ -26,7 +26,7 @@
         width="300"
         align="center">
         <template slot-scope="scope">
-          <span>￥ {{scope.row.amount}}</span>
+          <span> {{scope.row.amount /1000000000}} ETH</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -61,11 +61,12 @@ export default {
       pageSize: 8,
       total: 1,
       tableData: [],
-      loading: true
+      loading: true,
+      serverUrl: localStorage.getItem('server')
     }
   },
   beforeRouteEnter (to, from, next) {
-    const isLogin = sessionStorage.getItem('isLogin')
+    const isLogin = localStorage.getItem('isLogin')
     if (!isLogin) {
       next(vm => {
         vm.$parent.$children[0].isShowLogin = true
@@ -83,7 +84,7 @@ export default {
   methods: {
     getList () {
       var _this = this
-      var url = 'http://47.74.158.5:8889/project/invest/list?size=8&page=' + this.currentPage
+      var url = _this.serverUrl + '/project/invest/list?size=8&page=' + this.currentPage
       axios.get(url).then(res => {
         if (res.data.success) {
           _this.tableData = res.data.data.content

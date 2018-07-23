@@ -22,7 +22,7 @@
           <strong class="ccc">关于我们</strong>
           <ul class="link">
             <li>
-              <a href="http://www.qukuaiwang.com.cn/">简介</a>
+              <a @click="$router.push('aboutUs')" href="#/aboutUs">关于我们</a>
             </li>
             <li>
               <a @click="$router.push('termofuse')" href="#/termofuse">使用条款</a>
@@ -36,27 +36,30 @@
           <strong class="ccc">联系我们</strong>
           <ul class="link">
             <li>
-              <a href="http://www.qukuaiwang.com.cn/">yhbetter1@gmail.com</a>
+              客服：admin@wellico.io
+            </li>
+            <li>
+              商务合作：contact@wellico.io
             </li>
           </ul>
         </div>
-        <div class="items">
-            <strong>下载WELL</strong>
+        <div class="items right">
+          <strong class="bbb">下载WELL</strong>
             <div class="qkl-btn-group">
                 <span class="qkl-btn qkl-primary-btn"><i class="icon-device icon-ios"></i>iPhone版</span>
                 <span class="qkl-btn qkl-default-btn"><i class="icon-device icon-android"></i>Android版</span>
             </div>
         </div>
-      <div class="items" style="width: 140px">
-            <strong>联系客服</strong>
+      <div class="items right" style="width: 140px">
+        <strong class="bbb">联系客服</strong>
             <div class="erweima">
-                <img src="../images/erweima.png">
+                <img src="../images/wechatkf.png">
             </div>
         </div>
         <div class="items" style="width: 140px">
-            <strong>公众号</strong>
+          <strong class="bbb">公众号</strong>
             <div class="erweima">
-                <img src="../images/erweima.png">
+                <img src="http://pbdq2thqn.sabkt.gdipper.com/wechatSub.jpg">
             </div>
         </div>
     </div>
@@ -88,6 +91,9 @@ footer{
         margin-bottom: 30px;
         color: #000;
     }
+    .right{
+        padding-left: 10px;
+    }
     .items{
         display: inline-block;
         vertical-align: top;
@@ -115,6 +121,9 @@ footer{
     }
     .items .ccc{
       text-align: center;
+    }
+    .items .bbb{
+      margin-left: 13px;
     }
     .qkl-btn-group{
         width: 105px;
