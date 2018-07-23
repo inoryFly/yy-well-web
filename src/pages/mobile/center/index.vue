@@ -93,7 +93,6 @@ export default {
       }else if(this[active].status === 'FINAL'){
         this.$message.error("该信息不可更改")
       }
-      
     }
   }
 };

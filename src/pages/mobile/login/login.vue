@@ -64,7 +64,7 @@ export default {
       phone: true,
       account: undefined,
       pwd: undefined,
-      mobile: '17661138549',
+      mobile: undefined,
       captcha: undefined,
       message: false,
       minute: 60,

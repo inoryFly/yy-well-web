@@ -96,7 +96,6 @@ export default {
     };
   },
   mounted () {
-    console.log(sessionStorage.getItem('token'))
     this.getList(false);
   },
   watch:{

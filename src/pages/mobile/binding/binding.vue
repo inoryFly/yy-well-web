@@ -298,6 +298,7 @@ export default {
       }
     },
     sendMessage(params) {
+      console.log(12)
       bindPhoneCode(params).then(res => {
         if (res.data.success) {
           this.isSuccess = true;
@@ -308,7 +309,7 @@ export default {
       });
     },
     sendMes() {
-      if (this.code) {
+      if (!this.code) {
         this.time = setInterval(() => {
           if (this.minute > 0) {
             this.minute = this.minute - 1;
